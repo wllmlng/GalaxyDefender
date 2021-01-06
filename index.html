@@ -6,23 +6,32 @@
     <title>Galaxy Defender</title>
     <link rel='stylesheet' href='stylesheets/main.css'>
     <style>
-        /* canvas{
-            border: 2px solid lightgrey;
-            background-color: yellow;
-            height: 650px;
+        canvas{
+            position: absolute;
+            /* border: 2px solid lightgrey; */
+            /* background-color: yellow; */
+            /* height: 650px;
             width: 800px; */
+            top: 450px;
+            left: 50%;
+            /* top: 0px;
+            left: 0px; */
+            background: transparent;
+            transform: translate(-50%, -50%);
         }
         
     </style>
 </head>
-<body class='body_container' >
-<!-- <body onload="startGame()"></body> -->
+<body class='body_container' onload="initialize()">
     <header class='header' style="font-family:'SEGA LOGO FONT';font-weight:normal;font-size:41px">Galaxy Defender</header>
     
     <div class='game_container'>
-    <!-- <canvas id='mycanvas'></canvas>  -->
 
-        <div id='game'></div>
+        <canvas id='background' width="600" height="360"></canvas> 
+        <!-- <canvas id='main' width="800" height="650"></canvas> 
+        <canvas id='ship' width="800" height="650"></canvas>  -->
+
+            <!-- <div id='game'></div> -->
   
     </div>
 

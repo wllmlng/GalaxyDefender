@@ -3,7 +3,7 @@
     justify-content: center;
     flex-direction: column;
     background-color: black;
-    padding-bottom: 50px;
+    /* padding-bottom: 50px; */
 }
 
 .header{
@@ -12,10 +12,11 @@
     align-items: center;
     font-family: "SEGA LOGO FONT";
     color: #0ccac4;
-    background-color: black;
-    margin-bottom: 5px;
+    /* background-color: black; */
+    /* margin-bottom: 10px; */
+    margin-top: 50px;
     
-}
+} 
 
 @font-face {
     font-family: 'SEGA LOGO FONT';
@@ -29,41 +30,60 @@
     background-color: black;
     display: flex;
     justify-content: center;
-    /* flex-direction: end; */
     align-items: center;
+    /* margin-top: 100px; */
+    /* padding-bottom: 50px; */
 
-}
+} 
 
 
-#game{
+/* #game{
     width: 800px;
     height: 650px;
 
-    background: url('img/background_blue.png');
+    background: url('img/bg.png');
     position: relative;
     box-shadow: 0 2px 10px rgb(2, 207, 2);
     animation: move_background 4s linear infinite;
 
-}
+} */
 
 /* makes the background look like its moving */
-@keyframes move_background{
+/* @keyframes move_background{
     from {
         background-position-y: 0px;
     } to {
-        background-position-y: 256px;
+        background-position-y: 360px;
     }
+} */
+
+
+
+
+
+
+/*! TEST */
+#background{
+    /* border: 2px solid lightgrey; */
+    background-color: yellow;
+    /* background: url('img/background_purp.png'); */
+    width: 800px;
+    height: 650px;
+    /* position: absolute; */
+    /* top: 50%;
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
+    z-index: -2;
+    box-shadow: 0px 2px 10px rgb(2, 207, 2);
+    /* margin-bottom: 100px; */
+}
+/* 
+#main {
+    background-color: lightblue;
+    z-index: -1;
 }
 
-
-
-
-
-
-/* TEST */
-/* #mycanvas{
-    border: 2px solid lightgrey;
-    background-color: yellow;
-    height: 650px;
-    width: 800px;
+#ship{
+    background-color: green;
+    z-index: 0;
 } */
