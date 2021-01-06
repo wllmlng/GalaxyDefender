@@ -227,8 +227,8 @@ function Drawable(){
         this.itemHeight = height; 
     }
     this.pixelSpeed = 0; // pixels fps 
-    this.canvasWidth = 0; //the imgs width+height / canvas size
-    this.canvasHeight = 0; 
+    this.canvasWidth = 0; //800 //the imgs width+height / canvas size 
+    this.canvasHeight = 0; //650
 
     this.draw = function(){}; //DELETE indicator that this function isnt to create objects
 
@@ -356,6 +356,7 @@ function onKeyUp(e){
 
 
 function Ship(){
+
     this.speed = 5;
 
     let fireCounter = 15;
@@ -374,31 +375,22 @@ function Ship(){
             //removes ship at previous location if it moved
         
 
-            if (KEY_PRESS.left) {
-                this.x -= this.speed
-                this.x <= 0 ? this.x = 0 : null
-                // this.x -= this.speed
-                // if (this.x <= 0) // Keep player within the screen
-                //     this.x = 0;
+            if (KEY_PRESS.left) {                
+                this.x <= 0 ? this.x = 0 : this.x -= this.speed
             }
             if (KEY_PRESS.right) {
-                this.x += this.speed
-                // if (this.x >= this.canvasWidth - this.width)
-                //     this.x = this.canvasWidth - this.width;
+                this.x >= this.canvasWidth-SHIP.width ? this.x = this.canvasWidth - SHIP.width : this.x += this.speed
             }
             if (KEY_PRESS.up) {
-                this.y -= this.speed
-                // if (this.y <= this.canvasHeight/4*3)
-                //     this.y = this.canvasHeight/4*3;
+                this.y <= 0 ? this.y = 0 : this.y -= this.speed
+                console.log(this.canvasHeight)
+                
             }
             if (KEY_PRESS.down) {
-                this.y += this.speed
-                // if (this.y >= this.canvasHeight - this.height)
-                //     this.y = this.canvasHeight - this.height;
+                this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
             }
-
+            
             this.draw();
-            console.log('drawn ship')
         }    
 		// if (KEY_STATUS.space && counter >= fireRate) {
 		// 	this.fire();
