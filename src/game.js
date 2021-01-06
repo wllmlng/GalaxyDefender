@@ -1,4 +1,4 @@
-//!NON - CANVAS WAY
+//! NON-CANVAS WAY
 // //dimension of the game board
 // const DIM_X = 800;
 // const DIM_Y = 650;
@@ -146,93 +146,6 @@
 
 // initialize();  
 
-//!~~~~~~~~~~~~~~~~~~~CANVAS TEST~~~~~~~~~~~~~~~~~~~~~~~~~
-
-const SHIP = new Image();
-    SHIP.src = '../stylesheets/img/player_green.png';
-// SHIP.className = 'ship';
-// SHIP.style.height = 'auto';
-// SHIP.style.width = '40px';
-const BACKGROUND = new Image();
-    BACKGROUND.src = '../stylesheets/img/bg.png';
-
-
-function Drawable(){
-    this.initialize = function(x, y){ //sets the x and y position when game starts
-        this.x = x;
-        this.y = y;
-    }
-    this.speed = 0; // pixels fps 
-    this.canvasWidth = 0;
-    this.canvasHeight = 0;
-    this.draw = function(){}; //indicator that this function isnt to create objects
-
-}
-
-function Background(){
-    this.speed = 1; 
-
-    this.draw = function(){
-        this.y += this.speed; //1 pixel per frame
-        this.context.drawImage(BACKGROUND, this.x, this.y);
-        this.context.drawImage(BACKGROUND, this.x, this.y - this.canvasHeight); 
-        //redraw the same image twice so it appears to be infinite scrolling
-
-        if (this.y >= this.canvasHeight){
-            this.y = 0;
-        }
-        //if the image leaves the screen, it will restart
-    }   
-}
-Background.prototype = new Drawable();
-//telling Background to inherit everything from Drawable;
-
-
-
-
-function Game(){
-    this.initialize = function(){
-        this.bgCanvas = document.getElementById('background');
-        this.bgContext = this.bgCanvas.getContext('2d');
-
-        Background.prototype.context = this.bgContext;
-        Background.prototype.canvasWidth = this.bgCanvas.width;
-        Background.prototype.canvasHeight = this.bgCanvas.height;
-
-        this.background = new Background();
-        this.background.initialize(0, 0);
-
-    }
-
-    this.start = function(){
-        animate();
-    }
-}
-
-
-function animate(){
-    window.requestAnimationFrame(animate);
-    game.background.draw();
-}
-
-
-//  //lets the browser know to annimate something
-// window.requestAnimationFrame = (function(){
-//     return window.requestAnimationFrame
-// })
-
-
-
-// Initialize Game
-let game = new Game();
-
-function initialize(){
-    game.initialize();
-    game.start();
-}
-
-
-
 
 
 //!~~~~~~~~~~~~~~~~~~~CANVAS TEST  -  ORIGINAL~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -295,3 +208,270 @@ function initialize(){
 // function onKeyUp(e){
     
 // }
+
+//!~~~~~~~~~~~~~~~~~~~CANVAS ATTEMPT~~~~~~~~~~~~~~~~~~~~~~~~~
+
+const BACKGROUND = new Image();
+    BACKGROUND.src = '../stylesheets/img/bg.png';
+
+
+const SHIP = new Image();
+    SHIP.src = '../stylesheets/img/ship/player_cool.png';
+
+
+function Drawable(){
+    this.initialize = function(x, y, width, height){ 
+        this.x = x; //start pos(x,y) when initialized
+        this.y = y;
+        this.itemWidth = width; //size for ships/projectiles from 2nd canvas
+        this.itemHeight = height; 
+    }
+    this.pixelSpeed = 0; // pixels fps 
+    this.canvasWidth = 0; //the imgs width+height / canvas size
+    this.canvasHeight = 0; 
+
+    this.draw = function(){}; //DELETE indicator that this function isnt to create objects
+
+
+
+}
+
+
+                                        //! === BACKGROUND
+
+function Background(){
+    this.pixelSpeed = 1; 
+
+    this.draw = function(){
+        this.y += this.pixelSpeed; //1 pixel per frame
+        
+        this.context.drawImage(BACKGROUND, this.x, this.y);
+        this.context.drawImage(BACKGROUND, this.x, this.y - this.canvasHeight); //height="360"
+        //redraw the same image twice so it appears to be infinite scrolling
+
+        if (this.y >= this.canvasHeight){
+            this.y = 0;     //if the image leaves the screen, it will restart
+        }
+    }   
+}
+Background.prototype = new Drawable();
+// telling Background to inherit everything from Drawable;
+
+
+                                        //!BLASTER
+
+
+
+// const BLASTER = new Image();
+//     BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
+
+   
+// function Blaster(){
+
+//     this.fire = false;
+
+//     this.blaster = function(x, y){
+//         this.x = x;
+//         this.y = y;
+//         this.speed = 2;
+//         this.fire = true;
+//     }
+
+//     this.draw = function(){
+//         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+//         //erases the pixels in a given rectangular space
+//         this.y -= this.speed;
+//         this.context.drawImage(BLASTER, this.x, this.y)
+//     }
+
+//     this.clear = function(){
+//         this.x = 0;
+//         this.y = 0;
+//         this.speed = 0;
+//         this.alive = false;
+//     }
+
+
+// }
+// Blaster.prototype = new Drawable();                                        
+
+
+
+
+
+
+                                        //! === SHIP
+
+
+const MOVE_DIR = {
+    left: 'ArrowLeft',
+    right: 'ArrowRight',
+    up: 'ArrowUp',
+    down: 'ArrowDown',
+    space: "Space"
+}
+
+const KEY_PRESS = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+    space: false
+}
+
+window.addEventListener('keydown', onKeyPress);
+function onKeyPress(e){
+    e.preventDefault(); //prevents browser scroll
+    let key = e.code;
+    if(key === MOVE_DIR.left){
+        KEY_PRESS.left = true;
+        // console.log(KEY_PRESS.left)
+    }else if( key === MOVE_DIR.right ){
+        KEY_PRESS.right = true;
+    }else if ( key === MOVE_DIR.up){
+        KEY_PRESS.up = true;
+    }else if ( key === MOVE_DIR.down ){
+        KEY_PRESS.down = true;
+    }else if ( key === MOVE_DIR.space ){
+        console.log('pew');
+    }
+}
+
+window.addEventListener('keyup', onKeyUp);
+function onKeyUp(e){
+    let key = e.code;
+
+    if(key === MOVE_DIR.left){   
+        KEY_PRESS.left = false;
+    }else if( key === MOVE_DIR.right ){
+        KEY_PRESS.right = false;
+    }else if ( key === MOVE_DIR.up){
+        KEY_PRESS.up = false;
+    }else if ( key === MOVE_DIR.down ){
+        KEY_PRESS.down = false;
+    }else if ( key === MOVE_DIR.space ){
+        console.log('pew');
+    }
+}
+
+
+function Ship(){
+    this.speed = 5;
+
+    let fireCounter = 15;
+    let counter = 0;
+
+    this.draw = function(){
+        this.context.drawImage(SHIP, this.x, this.y);
+    }
+
+    this.move = function(){
+        counter++;
+
+        if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
+
+            this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+            //removes ship at previous location if it moved
+        
+
+            if (KEY_PRESS.left) {
+                this.x -= this.speed
+                this.x <= 0 ? this.x = 0 : null
+                // this.x -= this.speed
+                // if (this.x <= 0) // Keep player within the screen
+                //     this.x = 0;
+            }
+            if (KEY_PRESS.right) {
+                this.x += this.speed
+                // if (this.x >= this.canvasWidth - this.width)
+                //     this.x = this.canvasWidth - this.width;
+            }
+            if (KEY_PRESS.up) {
+                this.y -= this.speed
+                // if (this.y <= this.canvasHeight/4*3)
+                //     this.y = this.canvasHeight/4*3;
+            }
+            if (KEY_PRESS.down) {
+                this.y += this.speed
+                // if (this.y >= this.canvasHeight - this.height)
+                //     this.y = this.canvasHeight - this.height;
+            }
+
+            this.draw();
+            console.log('drawn ship')
+        }    
+		// if (KEY_STATUS.space && counter >= fireRate) {
+		// 	this.fire();
+		// 	counter = 0;
+		// }
+    }
+	// this.fire = function() {
+	// 	this.bulletPool.getTwo(this.x+6, this.y, 3, this.x+33, this.y, 3);
+	// };
+}
+Ship.prototype = new Drawable();
+
+
+
+
+
+                                    //! GAME
+function Game(){
+    this.initialize = function(){
+        this.bgCanvas = document.getElementById('background');
+        this.bgContext = this.bgCanvas.getContext('2d');
+        
+        Background.prototype.context = this.bgContext;
+        Background.prototype.canvasWidth = this.bgCanvas.width; //width="600"
+        Background.prototype.canvasHeight = this.bgCanvas.height; //height="360"
+
+
+
+        this.shipCanvas = document.getElementById('ship');
+        this.shipContext = this.shipCanvas.getContext('2d');
+        
+        Ship.prototype.context = this.shipContext;
+        Ship.prototype.canvasWidth = this.shipCanvas.width; //width="85"
+        Ship.prototype.canvasHeight = this.shipCanvas.height; //width="85"
+
+        this.background = new Background();
+        this.background.initialize(0, 0); //initializes bg - centered
+
+        this.ship = new Ship();
+        
+        let shipStartPosX = (this.shipCanvas.width / 2) - (SHIP.width / 2);
+        let shipStartPosY = (this.shipCanvas.height / 2) + 150;
+
+        // console.log(this.shipCanvas.width)
+        // console.log(SHIP.width)
+        // console.log(SHIP.height)
+		this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height);
+
+    }
+
+    this.start = function(){
+        this.ship.draw();
+        animate();
+    }
+}
+
+
+function animate(){
+    window.requestAnimationFrame(animate); //lets the browser know to animate something
+    game.background.draw();
+    game.ship.move();
+
+}
+
+
+// Initialize Game
+let game = new Game();
+
+function initialize(){
+    game.initialize();
+    game.start();
+}
+
+
+
+

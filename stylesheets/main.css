@@ -77,13 +77,13 @@
     box-shadow: 0px 2px 10px rgb(2, 207, 2);
     /* margin-bottom: 100px; */
 }
-/* 
+
 #main {
     background-color: lightblue;
     z-index: -1;
 }
 
 #ship{
-    background-color: green;
+    /* background-color: green; */
     z-index: 0;
-} */
+}
