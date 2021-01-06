@@ -231,8 +231,6 @@ function Drawable(){
     this.canvasWidth = 0; //800 //the imgs width+height / canvas size 
     this.canvasHeight = 0; //650
 
-    this.draw = function(){}; //DELETE indicator that this function isnt to create objects
-
 }
 
 
@@ -244,7 +242,7 @@ function Background(){
     this.draw = function(){
         this.y += this.pixelSpeed; //1 pixel per frame
         
-        this.context.drawImage(BACKGROUND, this.x, this.y);
+        this.context.drawImage(BACKGROUND, this.x, this.y); //600 x 360
         this.context.drawImage(BACKGROUND, this.x, this.y - this.canvasHeight); //height="360"
         //redraw the same image twice so it appears to be infinite scrolling
 
@@ -260,8 +258,8 @@ Background.prototype = new Drawable();
 
                                         //!BLASTER
 
-function Pool(size) { //OBJECT POOL TO RECYCLE BLASTERS
-	let bulletAmt = size; // pool size to recycle 
+function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
+	let bulletAmt = 30; // pool size to recycle 
     let pool = [];
     
 
@@ -272,6 +270,7 @@ function Pool(size) { //OBJECT POOL TO RECYCLE BLASTERS
             bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
             pool.push(bullet);
         }
+        // console.log(pool)
     }
 
     //checking to see if the bullet has been fired
@@ -281,9 +280,10 @@ function Pool(size) { //OBJECT POOL TO RECYCLE BLASTERS
 		if(lastShot.fired === false) {
             let bullet = pool.pop();
 			bullet.blaster(x, y);
-			pool.unshift(bullet); //moves used bullet to the front of arr
+			pool.unshift(bullet); //moves used bullet to the front of arr 
 		}                         
-	};
+    };
+    
     //FIRES 2 BLASTER
 	this.shootTwo = function(x1, y1, x2, y2) {
         let lastShot = pool[pool.length - 1] //pool[-1]
@@ -304,20 +304,13 @@ function Pool(size) { //OBJECT POOL TO RECYCLE BLASTERS
             this.shoot(x3, y3);
         }
 	};
-	/*
-	 * Draws any in use Bullets. If a bullet goes off the screen,
-	 * clears it and pushes it to the front of the array.
-	 */
-	this.animate = function() {
-		for (var i = 0; i < size; i++) {
+    
+    //if object is flipped true, this will animate the blaster and render it
+	this.animateFiring = function() {
+		for (let i = 0; i < bulletAmt; i++) {
 			if (pool[i].fired === true) {
-				if (pool[i].draw()) {
-					pool[i].clear();
-                    pool.push((pool.splice(i,1))[0]);
-				}
+                pool[i].draw()
 			}
-			else
-				break;
 		}
 	};
 }
@@ -329,7 +322,7 @@ function Blaster(){
 
     this.fired = false;
 
-    this.blaster = function(x, y){
+    this.blaster = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
         this.speed = 10;
@@ -360,9 +353,6 @@ function Blaster(){
 
 }
 Blaster.prototype = new Drawable();                                        
-
-
-
 
 
 
@@ -424,27 +414,25 @@ function onKeyUp(e){
 
 function Ship(){
 
-    this.speed = 5;
+    this.speed = 5; //speed of ship movement
 
-    //!TEST
-    this.bulletPool = new Pool(4);
-    this.bulletPool.initialize();
-    //!TEST
+    this.ammoSupply = new AmmoSupply(); 
+    this.ammoSupply.initialize();   //creates ammo collection (objPool)
 
-    let fireRate = 15;
-    let counter = 0;
+    let fireCoolDown = 15; 
+    let coolDownCounter = 0; //shoot once every 15 frame
 
     this.draw = function(){
         this.context.drawImage(SHIP, this.x, this.y);
     }
 
     this.move = function(){
-        counter++;
+        coolDownCounter += 1;
+        // console.log(coolDownCounter);
         if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
 
             this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
             //removes ship at previous location if it moved
-        
 
             if (KEY_PRESS.left) {                
                 this.x <= 0 ? this.x = 0 : this.x -= this.speed
@@ -461,20 +449,17 @@ function Ship(){
 
             this.draw();
         }    
-		if (KEY_PRESS.space && counter >= fireRate) {
+		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
             this.fire();
-            counter = 0;
+            coolDownCounter = 0;
         }
 
-        // if (KEY_PRESS.space) {
-        //     console.log('FIRE!')
-        //     this.fire();
-        // }
     }
+
 	this.fire = function() {
-        this.bulletPool.shoot(this.x+17, this.y);
-        // this.bulletPool.shootTwo(this.x+6, this.y, this.x+33, this.y);
-        // this.bulletPool.shootThree(this.x-10, this.y, this .x+43, this.y, this.x+17, this.y);
+        // this.ammoSupply.shoot(this.x+17, this.y);
+        this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
+        // this.ammoSupply.shootThree(this.x-10, this.y, this .x +42, this.y, this.x+17, this.y);
 	};
 }
 Ship.prototype = new Drawable();
@@ -488,10 +473,13 @@ function Game(){
     this.initialize = function(){
         this.bgCanvas = document.getElementById('background');
         this.bgContext = this.bgCanvas.getContext('2d');
+        // console.log(this.bgCanvas.width) 
+        // console.log(this.bgCanvas.height) 
         
             Background.prototype.context = this.bgContext;
             Background.prototype.canvasWidth = this.bgCanvas.width; //width="600"
             Background.prototype.canvasHeight = this.bgCanvas.height; //height="360"
+            
 
             this.background = new Background();
             this.background.initialize(0, 0); //initializes bg - centered
@@ -502,7 +490,7 @@ function Game(){
         
             Ship.prototype.context = this.shipContext;
             Ship.prototype.canvasWidth = this.shipCanvas.width; //width="800"
-            Ship.prototype.canvasHeight = this.shipCanvas.height; //width="650"
+            Ship.prototype.canvasHeight = this.shipCanvas.height; //height="650"
 
             this.ship = new Ship();
             
@@ -515,15 +503,13 @@ function Game(){
         this.mainContext = this.mainCanvas.getContext('2d');    
 
             Blaster.prototype.context = this.mainContext;
-            Blaster.prototype.canvasWidth = this.mainCanvas.width; 
-            Blaster.prototype.canvasHeight = this.mainCanvas.height;
-            // console.log(this.mainCanvas.width) 
+            Blaster.prototype.canvasWidth = this.mainCanvas.width;  //width="800"
+            Blaster.prototype.canvasHeight = this.mainCanvas.height;//height="650"
             // console.log(this.mainContext) 
 
     }
 
     this.start = function(){
-        // this.ship.draw();
         animate();
     }
 }
@@ -534,7 +520,7 @@ function animate(){
     game.background.draw();
     game.ship.draw();
     game.ship.move();
-    game.ship.bulletPool.animate();
+    game.ship.ammoSupply.animateFiring();
 
 }
 
