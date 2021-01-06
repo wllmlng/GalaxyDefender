@@ -52,18 +52,18 @@
 //     const _ship = document.querySelector('.ship')
 
 //     if(key === MOVE_DIR.left){
-//         // SHIP_POS.x -= 23;
-//         // console.log(SHIP_POS.x)
-//         // _ship.style.transform = `translate(${SHIP_POS.x}px, ${SHIP_POS.y}px)`    
-//         KEY_PRESS.left = true;
-//     }else if( key === MOVE_DIR.right ){
-//         KEY_PRESS.right = true;
-//     }else if ( key === MOVE_DIR.up){
-//         KEY_PRESS.up = true;
-//     }else if ( key === MOVE_DIR.down ){
-//         KEY_PRESS.down = true;
-//     }else if ( key === MOVE_DIR.space ){
-//         console.log('pew');
+//         SHIP_POS.x -= 23;
+//         console.log(SHIP_POS.x)
+//         _ship.style.transform = `translate(${SHIP_POS.x}px, ${SHIP_POS.y}px)`    
+    //     KEY_PRESS.left = true;
+    // }else if( key === MOVE_DIR.right ){
+    //     KEY_PRESS.right = true;
+    // }else if ( key === MOVE_DIR.up){
+    //     KEY_PRESS.up = true;
+    // }else if ( key === MOVE_DIR.down ){
+    //     KEY_PRESS.down = true;
+    // }else if ( key === MOVE_DIR.space ){
+    //     console.log('pew');
 //     }
 // }
 
@@ -213,10 +213,11 @@
 
 const BACKGROUND = new Image();
     BACKGROUND.src = '../stylesheets/img/bg.png';
-
-
 const SHIP = new Image();
     SHIP.src = '../stylesheets/img/ship/player_cool.png';
+const BLASTER = new Image();
+    BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
+
 
 
 function Drawable(){
@@ -232,12 +233,10 @@ function Drawable(){
 
     this.draw = function(){}; //DELETE indicator that this function isnt to create objects
 
-
-
 }
 
 
-                                        //! === BACKGROUND
+                                        //! BACKGROUND
 
 function Background(){
     this.pixelSpeed = 1; 
@@ -258,42 +257,109 @@ Background.prototype = new Drawable();
 // telling Background to inherit everything from Drawable;
 
 
+
                                         //!BLASTER
 
+function Pool(size) { //OBJECT POOL TO RECYCLE BLASTERS
+	let bulletAmt = size; // pool size to recycle 
+    let pool = [];
+    
+
+    //fills up our arr with a collection of blaster objects to RECYCLE
+    this.initialize = function () {
+        for ( let i = 0; i < bulletAmt; i ++){
+            let bullet = new Blaster();
+            bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
+            pool.push(bullet);
+        }
+    }
+
+    //checking to see if the bullet has been fired
+    //if false, it will move it to the front for grabs
+	this.shoot = function(x, y) {
+        let lastShot = pool[pool.length - 1] //pool[-1]
+		if(lastShot.fired === false) {
+            let bullet = pool.pop();
+			bullet.blaster(x, y);
+			pool.unshift(bullet); //moves used bullet to the front of arr
+		}                         
+	};
+    //FIRES 2 BLASTER
+	this.shootTwo = function(x1, y1, x2, y2) {
+        let lastShot = pool[pool.length - 1] //pool[-1]
+        let twoLastShot = pool[pool.length - 2] //pool[-2]
+		if (lastShot.fired === false && twoLastShot.fired === false) {
+            this.shoot(x1, y1);
+            this.shoot(x2, y2);
+        }
+    };
+    //FIRES 3 BLASTER
+    this.shootThree = function(x1, y1, x2, y2, x3, y3) {
+        let lastShot = pool[pool.length - 1] //pool[-1]
+        let twoLastShot = pool[pool.length - 2] //pool[-2]
+        let threeLastShot = pool[pool.length - 3] //pool[-3]
+		if (lastShot.fired === false && twoLastShot.fired === false && threeLastShot.fired === false) {
+            this.shoot(x1, y1);
+            this.shoot(x2, y2);
+            this.shoot(x3, y3);
+        }
+	};
+	/*
+	 * Draws any in use Bullets. If a bullet goes off the screen,
+	 * clears it and pushes it to the front of the array.
+	 */
+	this.animate = function() {
+		for (var i = 0; i < size; i++) {
+			if (pool[i].fired === true) {
+				if (pool[i].draw()) {
+					pool[i].clear();
+                    pool.push((pool.splice(i,1))[0]);
+				}
+			}
+			else
+				break;
+		}
+	};
+}
 
 
-// const BLASTER = new Image();
-//     BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
 
    
-// function Blaster(){
+function Blaster(){
 
-//     this.fire = false;
+    this.fired = false;
 
-//     this.blaster = function(x, y){
-//         this.x = x;
-//         this.y = y;
-//         this.speed = 2;
-//         this.fire = true;
-//     }
+    this.blaster = function(x, y){
+        this.x = x; 
+        this.y = y; //where the blaster travels when its shot
+        this.speed = 10;
+        this.fired = true;
+    }
+    
+    this.draw = function(){
+        this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
+        this.y -= this.speed;
+        if (this.y <= 0 ) {
+            this.resetBulletObj()
+            console.log('reseting')
+		}
+		else {
+            this.context.drawImage(BLASTER, this.x, this.y);
+            //need drawImage to render the png file onto the browser
+            // console.log('drawing')
+		}
+    }
 
-//     this.draw = function(){
-//         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
-//         //erases the pixels in a given rectangular space
-//         this.y -= this.speed;
-//         this.context.drawImage(BLASTER, this.x, this.y)
-//     }
+    //resets the blaster object so we can reuse it in our pool
+    this.resetBulletObj = function(){
+        this.x = 0;
+        this.y = 0;
+        this.speed = 0;
+        this.fired = false;
+    }
 
-//     this.clear = function(){
-//         this.x = 0;
-//         this.y = 0;
-//         this.speed = 0;
-//         this.alive = false;
-//     }
-
-
-// }
-// Blaster.prototype = new Drawable();                                        
+}
+Blaster.prototype = new Drawable();                                        
 
 
 
@@ -323,6 +389,7 @@ window.addEventListener('keydown', onKeyPress);
 function onKeyPress(e){
     e.preventDefault(); //prevents browser scroll
     let key = e.code;
+    // console.log(e)
     if(key === MOVE_DIR.left){
         KEY_PRESS.left = true;
         // console.log(KEY_PRESS.left)
@@ -333,7 +400,7 @@ function onKeyPress(e){
     }else if ( key === MOVE_DIR.down ){
         KEY_PRESS.down = true;
     }else if ( key === MOVE_DIR.space ){
-        console.log('pew');
+        KEY_PRESS.space = true;
     }
 }
 
@@ -350,7 +417,7 @@ function onKeyUp(e){
     }else if ( key === MOVE_DIR.down ){
         KEY_PRESS.down = false;
     }else if ( key === MOVE_DIR.space ){
-        console.log('pew');
+        KEY_PRESS.space = false;
     }
 }
 
@@ -359,7 +426,12 @@ function Ship(){
 
     this.speed = 5;
 
-    let fireCounter = 15;
+    //!TEST
+    this.bulletPool = new Pool(4);
+    this.bulletPool.initialize();
+    //!TEST
+
+    let fireRate = 15;
     let counter = 0;
 
     this.draw = function(){
@@ -368,7 +440,6 @@ function Ship(){
 
     this.move = function(){
         counter++;
-
         if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
 
             this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
@@ -383,23 +454,28 @@ function Ship(){
             }
             if (KEY_PRESS.up) {
                 this.y <= 0 ? this.y = 0 : this.y -= this.speed
-                console.log(this.canvasHeight)
-                
             }
             if (KEY_PRESS.down) {
                 this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
             }
-            
+
             this.draw();
         }    
-		// if (KEY_STATUS.space && counter >= fireRate) {
-		// 	this.fire();
-		// 	counter = 0;
-		// }
+		if (KEY_PRESS.space && counter >= fireRate) {
+            this.fire();
+            counter = 0;
+        }
+
+        // if (KEY_PRESS.space) {
+        //     console.log('FIRE!')
+        //     this.fire();
+        // }
     }
-	// this.fire = function() {
-	// 	this.bulletPool.getTwo(this.x+6, this.y, 3, this.x+33, this.y, 3);
-	// };
+	this.fire = function() {
+        this.bulletPool.shoot(this.x+17, this.y);
+        // this.bulletPool.shootTwo(this.x+6, this.y, this.x+33, this.y);
+        // this.bulletPool.shootThree(this.x-10, this.y, this .x+43, this.y, this.x+17, this.y);
+	};
 }
 Ship.prototype = new Drawable();
 
@@ -413,36 +489,41 @@ function Game(){
         this.bgCanvas = document.getElementById('background');
         this.bgContext = this.bgCanvas.getContext('2d');
         
-        Background.prototype.context = this.bgContext;
-        Background.prototype.canvasWidth = this.bgCanvas.width; //width="600"
-        Background.prototype.canvasHeight = this.bgCanvas.height; //height="360"
+            Background.prototype.context = this.bgContext;
+            Background.prototype.canvasWidth = this.bgCanvas.width; //width="600"
+            Background.prototype.canvasHeight = this.bgCanvas.height; //height="360"
 
+            this.background = new Background();
+            this.background.initialize(0, 0); //initializes bg - centered
 
 
         this.shipCanvas = document.getElementById('ship');
         this.shipContext = this.shipCanvas.getContext('2d');
         
-        Ship.prototype.context = this.shipContext;
-        Ship.prototype.canvasWidth = this.shipCanvas.width; //width="85"
-        Ship.prototype.canvasHeight = this.shipCanvas.height; //width="85"
+            Ship.prototype.context = this.shipContext;
+            Ship.prototype.canvasWidth = this.shipCanvas.width; //width="800"
+            Ship.prototype.canvasHeight = this.shipCanvas.height; //width="650"
 
-        this.background = new Background();
-        this.background.initialize(0, 0); //initializes bg - centered
+            this.ship = new Ship();
+            
+            let shipStartPosX = (this.shipCanvas.width / 2) - (SHIP.width / 2);
+            let shipStartPosY = (this.shipCanvas.height / 2) + 150;
 
-        this.ship = new Ship();
-        
-        let shipStartPosX = (this.shipCanvas.width / 2) - (SHIP.width / 2);
-        let shipStartPosY = (this.shipCanvas.height / 2) + 150;
+            this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height);
 
-        // console.log(this.shipCanvas.width)
-        // console.log(SHIP.width)
-        // console.log(SHIP.height)
-		this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height);
+        this.mainCanvas = document.getElementById('main');
+        this.mainContext = this.mainCanvas.getContext('2d');    
+
+            Blaster.prototype.context = this.mainContext;
+            Blaster.prototype.canvasWidth = this.mainCanvas.width; 
+            Blaster.prototype.canvasHeight = this.mainCanvas.height;
+            // console.log(this.mainCanvas.width) 
+            // console.log(this.mainContext) 
 
     }
 
     this.start = function(){
-        this.ship.draw();
+        // this.ship.draw();
         animate();
     }
 }
@@ -451,7 +532,9 @@ function Game(){
 function animate(){
     window.requestAnimationFrame(animate); //lets the browser know to animate something
     game.background.draw();
+    game.ship.draw();
     game.ship.move();
+    game.ship.bulletPool.animate();
 
 }
 
