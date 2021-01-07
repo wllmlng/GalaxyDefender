@@ -262,8 +262,8 @@ Background.prototype = new Drawable();
 
                                         //!BLASTER / ZAPPER
 
-function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
-	let bulletAmt = 30; // pool size to recycle 
+function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
+	let bulletAmt = 10; // pool size to recycle 
     let pool = [];
     //!TEST
     let enemyPool = [];
@@ -279,36 +279,47 @@ function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
         //     pool.push(bullet);
         // }
         // console.log('blasterAmmo',pool)
+
         if( team === 'blaster' ){
             for ( let i = 0; i < bulletAmt; i ++){
                 let bullet = new Blaster('blaster');
                 bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
                 pool.push(bullet);
             }
-            console.log('blasterAmmo', pool)
-        }else if ( team === 'zapper'){
-            for ( let i = 0; i < bulletAmt; i ++){
-                let zap = new Blaster('zapper');
-                zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
-                pool.push(zap);
-            }
-            console.log('zapperAmmo', pool)
-        }else if (team === 'enemyShip'){
+            // console.log('blasterAmmo', pool)
+        }
+
+        if ( team === 'enemyShip'){
             for ( let i = 0; i < bulletAmt; i ++){
                 let enemy = new Enemy();
                 enemy.initialize(0, 0, ENEMY1.width, ENEMY1.height);
-                pool.push(enemy);
+                pool.push(enemy);//!changed
+                // console.log('297 - fine',enemy)
             }
         }
 
+        // if (team === 'zapper'){
+        //     for ( let i = 0; i < bulletAmt; i ++){
+        //         let zap = new Blaster('zapper');
+        //         zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
+        //         pool.push(zap);//!changed
+        //         console.log('305 - fine',zap)
+        //     }
+        // }
+
     }
+    console.log('should get 2', pool)
 
     //checking to see if the bullet has been fired
     //if false, it will move it to the front for grabs
 	this.shoot = function(x, y) {
         let lastShot = pool[pool.length - 1] //pool[-1]
+
+        // console.log('shoot',pool)
+
 		if(lastShot.fired === false) {
             let bullet = pool.pop();
+            // console.log('320 - fine',bullet)
 			bullet.blaster(x, y);
 			pool.unshift(bullet); //moves used bullet to the front of arr 
 		}                         
@@ -335,14 +346,18 @@ function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
         }
 	};
     
-    //if object is flipped true, this will animate the blaster and render it
+    // if object is flipped true, this will animate the blaster and render it
 	this.animateFiring = function() {
+
 		for (let i = 0; i < bulletAmt; i++) {
 			if (pool[i].fired === true) {
                 pool[i].draw()
-			}
+			}else
+                break;
+            
 		}
-	};
+    };
+    
 }
 
 
@@ -421,17 +436,20 @@ const KEY_PRESS = {
 
 window.addEventListener('keydown', onKeyPress);
 function onKeyPress(e){
-    e.preventDefault(); //prevents browser scroll
     let key = e.code;
     // console.log(e)
     if(key === MOVE_DIR.left){
+        e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
         // console.log(KEY_PRESS.left)
     }else if( key === MOVE_DIR.right ){
+        e.preventDefault(); //prevents browser scroll
         KEY_PRESS.right = true;
     }else if ( key === MOVE_DIR.up){
+        e.preventDefault(); //prevents browser scroll
         KEY_PRESS.up = true;
     }else if ( key === MOVE_DIR.down ){
+        e.preventDefault(); //prevents browser scroll
         KEY_PRESS.down = true;
     }else if ( key === MOVE_DIR.space ){
         KEY_PRESS.space = true;
@@ -512,7 +530,68 @@ function Ship(){
 Ship.prototype = new Drawable();
 
 
+                                    //! ENEMY SHIP
+function Enemy(){
+    let randomFire = .01;
+    let chance = 0;
 
+    this.fired = false;
+
+    this.blaster = function(x, y){ //!CALL IT SPAWN?
+        this.x = x;
+        this.y = y;
+        this.speed = 3;
+		this.speedX = 0;
+		this.speedY = 3;
+        this.fired = true;
+        this.leftEdge = this.x - 90;
+		this.rightEdge = this.x + 90;
+		this.bottomEdge = this.y + 140;
+    }
+
+    this.draw = function(){
+        this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);
+        this.x += this.speedX;
+        this.y += this.speedY;
+        		if (this.x <= this.leftEdge) {
+			this.speedX = this.speed;
+		}
+		else if (this.x >= this.rightEdge + this.width) {
+			this.speedX = -this.speed;
+		}
+		else if (this.y >= this.bottomEdge) {
+			this.speed = 1.5;
+			this.speedY = 0;
+			this.y -= 5;
+			this.speedX = -this.speed;
+		}
+		this.context.drawImage(ENEMY1, this.x, this.y);
+		// Enemy has a chance to shoot every movement
+		chance = Math.floor(Math.random()*101);
+		// if (chance/100 < randomFire) {
+		// 	this.fire();
+		// }
+	};
+	/*
+	 * Fires a bullet
+	 */
+	// this.fire = function() {
+	// 	game.enemyAmmo.shoot(this.x+this.width/2, this.y+this.height, -2.5);
+	// }
+	/*
+	 * Resets the enemy values
+	 */
+	this.clear = function() {
+		this.x = 0;
+		this.y = 0;
+		this.speed = 0;
+		this.speedX = 0;
+		this.speedY = 0;
+		this.fired = false;
+	};
+}
+Enemy.prototype = new Drawable();
+               
 
 
                                     //! GAME
@@ -553,7 +632,31 @@ function Game(){
             Blaster.prototype.canvasWidth = this.mainCanvas.width;  //width="800"
             Blaster.prototype.canvasHeight = this.mainCanvas.height;//height="650"
             // console.log(this.mainContext) 
+//!TEST
+            Enemy.prototype.context = this.mainContext;
+            Enemy.prototype.canvasWidth = this.mainCanvas.width;
+            Enemy.prototype.canvasHeight = this.mainCanvas.height;    
+            this.enemyShip = new AmmoSupply();
+            this.enemyShip.initialize('enemyShip');
+            let x = 100;
+            let y = 50;
+            var spacer = y * 1.5;
+			for (var i = 1; i <= 18; i++) {
+				this.enemyShip.shoot(x,y);
+				x += ENEMY1.width + 25;
+				if (i % 6 == 0) {
+					x = 100;
+					y += spacer
+				}
+			}
+            // this.enemyAmmo = new AmmoSupply();
+            // this.enemyAmmo.initialize('zapper');
 
+//!TEST
+
+
+
+            
     }
 
     this.start = function(){
@@ -568,6 +671,9 @@ function animate(){
     game.ship.draw();
     game.ship.move();
     game.ship.ammoSupply.animateFiring();
+
+    game.enemyShip.animateFiring();
+    // game.enemyAmmo.animateFiring();
 
 }
 
