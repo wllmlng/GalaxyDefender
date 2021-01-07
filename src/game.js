@@ -559,23 +559,28 @@ function Enemy(){
 		this.speedX = 2; // speed they descend hori/diag
 		this.speedY = 1; // speed they descend vert/diag
         this.fired = true;
-        this.leftBorder = this.x - 150; // how far left they can go
-		this.rightBorder = 600;
-		this.bottomBorder = 350; // how far down they can go
+        this.leftBorder = this.x - 750; // how far left they can go
+		this.rightBorder = this.x - 330;
+        this.bottomBorder = this.y + 300; // how far down they can go
+        this.topBorder = this.y + 200; // how far down they can go
     }
 
     this.draw = function(){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);
         this.x -= this.speedX;
         this.y += this.speedY;
-        if (this.x <= 0) {
-            // this.speedX = -2;
-        // }else if (this.y === this.bottomBorder){ 
-        //     this.speedY = -1;
-        // }else if (this.x === this.rightBorder){
-        //     this.speedX = 4;
-        // }else if (this.y === 0){
-        //     this.speedY = 1;
+        if (this.x === this.leftBorder) {
+            this.speedX = -3;
+            this.speedY = -1;
+        }
+        if( this.x === this.rightBorder){
+            this.speedX=4;
+        }
+        if( this.y === this.topBorder){
+            this.speedY=1;
+        }
+        if( this.y === this.bottomBorder){
+            this.speedY= -1;
         }
 
 		this.context.drawImage(ENEMY1, this.x, this.y);
@@ -655,15 +660,16 @@ function Game(){
             // let y = -10;
             let x = 650;
             let y = -10;
-            let spacer = y * 8;
-			for (let i = 1; i <= 8; i++) {
+            let spacer = y * 7;
+			for (let i = 1; i <= 18; i++) {
 				this.enemyShip.shoot(x,y);
 				x += ENEMY1.width + 25;
-				if (i % 4 == 0) {
-					x -= 350;
+				if (i % 6 === 0) {
+					x -= 400;
 					y += spacer
 				}
-			}
+            }
+            
             // this.enemyAmmo = new AmmoSupply();
             // this.enemyAmmo.initialize('zapper');
 
