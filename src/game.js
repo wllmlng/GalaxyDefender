@@ -214,7 +214,7 @@
 const BACKGROUND = new Image();
     BACKGROUND.src = '../stylesheets/img/bg.png';
 const SHIP = new Image();
-    SHIP.src = '../stylesheets/img/ship/player_cool.png';
+    SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';    
 const BLASTER = new Image();
     BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
 const ENEMY1 = new Image();
@@ -263,11 +263,8 @@ Background.prototype = new Drawable();
                                         //!BLASTER / ZAPPER
 
 function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
-	let bulletAmt = 10; // pool size to recycle 
+	let bulletAmt = 5; // pool size to recycle 
     let pool = [];
-    //!TEST
-    let enemyPool = [];
-    //!TEST
     
 
     //fills up our arr with a collection of blaster objects to RECYCLE
@@ -286,41 +283,35 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
                 bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
                 pool.push(bullet);
             }
-            // console.log('blasterAmmo', pool)
         }
 
         if ( team === 'enemyShip'){
             for ( let i = 0; i < bulletAmt; i ++){
                 let enemy = new Enemy();
                 enemy.initialize(0, 0, ENEMY1.width, ENEMY1.height);
-                pool.push(enemy);//!changed
+                pool.push(enemy);
                 // console.log('297 - fine',enemy)
             }
         }
 
-        // if (team === 'zapper'){
-        //     for ( let i = 0; i < bulletAmt; i ++){
-        //         let zap = new Blaster('zapper');
-        //         zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
-        //         pool.push(zap);//!changed
-        //         console.log('305 - fine',zap)
-        //     }
-        // }
+        if (team === 'zapper'){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let zap = new Blaster('zapper');
+                zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
+                pool.push(zap);
+                // console.log('305 - fine',zap)
+            }
+        }
 
     }
-    console.log('should get 2', pool)
-
     //checking to see if the bullet has been fired
     //if false, it will move it to the front for grabs
 	this.shoot = function(x, y) {
         let lastShot = pool[pool.length - 1] //pool[-1]
 
-        // console.log('shoot',pool)
-
 		if(lastShot.fired === false) {
             let bullet = pool.pop();
-            // console.log('320 - fine',bullet)
-			bullet.blaster(x, y);
+			bullet.create(x, y);
 			pool.unshift(bullet); //moves used bullet to the front of arr 
 		}                         
     };
@@ -352,8 +343,7 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
 		for (let i = 0; i < bulletAmt; i++) {
 			if (pool[i].fired === true) {
                 pool[i].draw()
-			}else
-                break;
+			};
             
 		}
     };
@@ -367,7 +357,7 @@ function Blaster(good_evil){
     let team = good_evil;
     this.fired = false;
 
-    this.blaster = function(x, y){  //x and y provided but the ship fire function
+    this.create = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
         this.speed = 10;
@@ -441,13 +431,15 @@ function onKeyPress(e){
     if(key === MOVE_DIR.left){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
-        // console.log(KEY_PRESS.left)
+        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_left.png';
     }else if( key === MOVE_DIR.right ){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.right = true;
+        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_right.png';
     }else if ( key === MOVE_DIR.up){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.up = true;
+        ship.thrust = true;
     }else if ( key === MOVE_DIR.down ){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.down = true;
@@ -460,12 +452,16 @@ window.addEventListener('keyup', onKeyUp);
 function onKeyUp(e){
     let key = e.code;
 
-    if(key === MOVE_DIR.left){   
+    if(key === MOVE_DIR.left){  
+        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png'; 
+        
         KEY_PRESS.left = false;
     }else if( key === MOVE_DIR.right ){
+        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';
         KEY_PRESS.right = false;
     }else if ( key === MOVE_DIR.up){
         KEY_PRESS.up = false;
+        ship.thrust = false;
     }else if ( key === MOVE_DIR.down ){
         KEY_PRESS.down = false;
     }else if ( key === MOVE_DIR.space ){
@@ -475,6 +471,8 @@ function onKeyUp(e){
 
 
 function Ship(){
+    this.accelAni = document.getElementById('accel');
+    this.thrust = false;
 
     this.speed = 5; //speed of ship movement
 
@@ -521,9 +519,10 @@ function Ship(){
 
     }
 
+
 	this.fire = function() {
-        this.ammoSupply.shoot(this.x+17, this.y);
-        // this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
+        // this.ammoSupply.shoot(this.x+17, this.y);
+        this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
         // this.ammoSupply.shootThree(this.x-10, this.y, this .x +42, this.y, this.x+17, this.y);
 	};
 }
@@ -537,7 +536,7 @@ function Enemy(){
 
     this.fired = false;
 
-    this.blaster = function(x, y){ //!CALL IT SPAWN?
+    this.create = function(x, y){ 
         this.x = x;
         this.y = y;
         this.speed = 3;
@@ -653,9 +652,6 @@ function Game(){
             // this.enemyAmmo.initialize('zapper');
 
 //!TEST
-
-
-
             
     }
 
