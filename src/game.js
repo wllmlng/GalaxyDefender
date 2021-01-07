@@ -212,15 +212,15 @@
 //!~~~~~~~~~~~~~~~~~~~CANVAS ATTEMPT~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const BACKGROUND = new Image();
-    BACKGROUND.src = '../stylesheets/img/bg.png';
+    BACKGROUND.src = './stylesheets/img/bg.png';
 const SHIP = new Image();
-    SHIP.src = '../stylesheets/img/ship/player_cool.png';
+    SHIP.src = './stylesheets/img/ship/player_cool.png';
 const BLASTER = new Image();
-    BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
+    BLASTER.src = './stylesheets/img/blaster/laserBlue01.png';
 const ENEMY1 = new Image();
-    ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003.png';    
+    ENEMY1.src = './stylesheets/img/enemy/spaceShips_003.png';    
 const ZAPPER = new Image();
-    ZAPPER.src = '../stylesheets/img/blaster/bullet_enemy.png';        
+    ZAPPER.src = './stylesheets/img/blaster/bullet_enemy.png';        
 
 
 
