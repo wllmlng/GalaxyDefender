@@ -217,6 +217,10 @@ const SHIP = new Image();
     SHIP.src = '../stylesheets/img/ship/player_cool.png';
 const BLASTER = new Image();
     BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
+const ENEMY1 = new Image();
+    ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003.png';    
+const ZAPPER = new Image();
+    ZAPPER.src = '../stylesheets/img/blaster/bullet_enemy.png';        
 
 
 
@@ -256,21 +260,26 @@ Background.prototype = new Drawable();
 
 
 
-                                        //!BLASTER
+                                        //!BLASTER / ZAPPER
 
 function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
 	let bulletAmt = 30; // pool size to recycle 
     let pool = [];
+    //!TEST
+    let enemyPool = [];
+    //!TEST
     
 
     //fills up our arr with a collection of blaster objects to RECYCLE
     this.initialize = function () {
+
+
         for ( let i = 0; i < bulletAmt; i ++){
             let bullet = new Blaster();
             bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
             pool.push(bullet);
         }
-        // console.log(pool)
+        console.log('blasterAmmo',pool)
     }
 
     //checking to see if the bullet has been fired
@@ -318,8 +327,8 @@ function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
 
 
    
-function Blaster(){
-
+function Blaster(good_evil){
+    let team = good_evil;
     this.fired = false;
 
     this.blaster = function(x, y){  //x and y provided but the ship fire function
@@ -332,15 +341,29 @@ function Blaster(){
     this.draw = function(){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
         this.y -= this.speed;
-        if (this.y <= 0 ) {
+        // if (this.y <= 0 ) {
+        //     this.resetBulletObj()
+        //     console.log('reseting')
+		// }
+		// else {
+        //     this.context.drawImage(BLASTER, this.x, this.y);
+        //     //need drawImage to render the png file onto the browser
+        //     // console.log('drawing')
+        // }
+        
+        //!TESTING
+        if (team === 'blaster' && this.y <= 0 ) {
             this.resetBulletObj()
             console.log('reseting')
-		}
-		else {
-            this.context.drawImage(BLASTER, this.x, this.y);
-            //need drawImage to render the png file onto the browser
-            // console.log('drawing')
-		}
+        } else if( team === 'zapper' && this.y >= 650 ){
+            this.resetBulletObj()
+        }else {
+            team === 'zapper' ? 
+            this.context.drawImage(ZAPPER, this.x, this.y) :
+            this.context.drawImage(BLASTER, this.x, this.y) 
+            
+        }
+        //!TESTING
     }
 
     //resets the blaster object so we can reuse it in our pool
@@ -457,8 +480,8 @@ function Ship(){
     }
 
 	this.fire = function() {
-        // this.ammoSupply.shoot(this.x+17, this.y);
-        this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
+        this.ammoSupply.shoot(this.x+17, this.y);
+        // this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
         // this.ammoSupply.shootThree(this.x-10, this.y, this .x +42, this.y, this.x+17, this.y);
 	};
 }
