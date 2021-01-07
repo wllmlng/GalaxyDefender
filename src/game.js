@@ -212,7 +212,7 @@
 //!~~~~~~~~~~~~~~~~~~~CANVAS ATTEMPT~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const BACKGROUND = new Image();
-    BACKGROUND.src = '../stylesheets/img/bg.png';
+    BACKGROUND.src = '../stylesheets/img/bg_vert.png';
 const SHIP = new Image();
     SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';    
 const ACCEL = new Image();
@@ -220,7 +220,7 @@ const ACCEL = new Image();
 const BLASTER = new Image();
     BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
 const ENEMY1 = new Image();
-    ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003.png';    
+    ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003_60.png';    
 const ZAPPER = new Image();
     ZAPPER.src = '../stylesheets/img/blaster/bullet_enemy.png';        
 
@@ -357,6 +357,7 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
    
 function Blaster(good_evil){
     let team = good_evil;
+    
     this.fired = false;
 
     this.create = function(x, y){  //x and y provided but the ship fire function
@@ -455,11 +456,11 @@ function onKeyUp(e){
     let key = e.code;
 
     if(key === MOVE_DIR.left){  
-        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png'; 
+        SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png'; 
         
         KEY_PRESS.left = false;
     }else if( key === MOVE_DIR.right ){
-        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';
+        SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png';
         KEY_PRESS.right = false;
     }else if ( key === MOVE_DIR.up){
         KEY_PRESS.up = false;
@@ -475,7 +476,7 @@ function onKeyUp(e){
 function Ship(){
     this.thrust = false;
 
-    this.speed = 5; //speed of ship movement
+    this.speed = 4; //speed of ship movement
 
     this.ammoSupply = new AmmoSupply(); 
     // this.ammoSupply.initialize();   //creates ammo collection (objPool)
@@ -483,17 +484,17 @@ function Ship(){
     this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
 
 
-    // this.drawFire = function() {
-    //     if (ship.thrust === true) {
-    //         this.context.drawImage(ACCEL, this.x + 15, this.y + 50, 35, 40);
-    //         this.context.drawImage(ACCEL, this.x + 4, this.y + 50, 35, 40);
-    //     } else {
-    //         this.thrust = false;
-    //     }
-    // }
+    this.drawFire = function() {
+        if (ship.thrust === true) {
+            this.context.drawImage(ACCEL, this.x + 15, this.y + 39, 35, 40);
+            this.context.drawImage(ACCEL, this.x + 4, this.y + 39, 35, 40);
+        } else {
+            this.thrust = false;
+        }
+    }
     //!TEST
 
-    let fireCoolDown = 15; 
+    let fireCoolDown = 25; 
     let coolDownCounter = 0; //shoot once every 15 frame
 
     this.draw = function(){
@@ -516,13 +517,14 @@ function Ship(){
             }
             if (KEY_PRESS.up) {
                 this.y <= 0 ? this.y = 0 : this.y -= this.speed
-
+                this.drawFire();
             }
             if (KEY_PRESS.down) {
                 this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
             }
 
             this.draw();
+            // this.drawFire();
         }    
 		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
             this.fire();
@@ -541,7 +543,9 @@ function Ship(){
 Ship.prototype = new Drawable();
 
 
+
                                     //! ENEMY SHIP
+
 function Enemy(){
     let randomFire = .01;
     let chance = 0;
@@ -549,36 +553,34 @@ function Enemy(){
     this.fired = false;
 
     this.create = function(x, y){ 
-        this.x = x;
-        this.y = y;
-        this.speed = 3;
-		this.speedX = 0;
-		this.speedY = 3;
+        this.x = x;  //enemy ship start pos (init 350)
+        this.y = y;  //enemy ship start pos
+        this.speed = 5; 
+		this.speedX = 2; // speed they descend hori/diag
+		this.speedY = 1; // speed they descend vert/diag
         this.fired = true;
-        this.leftEdge = this.x - 90;
-		this.rightEdge = this.x + 90;
-		this.bottomEdge = this.y + 140;
+        this.leftBorder = this.x - 150; // how far left they can go
+		this.rightBorder = 600;
+		this.bottomBorder = 350; // how far down they can go
     }
 
     this.draw = function(){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);
-        this.x += this.speedX;
+        this.x -= this.speedX;
         this.y += this.speedY;
-        		if (this.x <= this.leftEdge) {
-			this.speedX = this.speed;
-		}
-		else if (this.x >= this.rightEdge + this.width) {
-			this.speedX = -this.speed;
-		}
-		else if (this.y >= this.bottomEdge) {
-			this.speed = 1.5;
-			this.speedY = 0;
-			this.y -= 5;
-			this.speedX = -this.speed;
-		}
+        if (this.x <= 0) {
+            // this.speedX = -2;
+        // }else if (this.y === this.bottomBorder){ 
+        //     this.speedY = -1;
+        // }else if (this.x === this.rightBorder){
+        //     this.speedX = 4;
+        // }else if (this.y === 0){
+        //     this.speedY = 1;
+        }
+
 		this.context.drawImage(ENEMY1, this.x, this.y);
 		// Enemy has a chance to shoot every movement
-		chance = Math.floor(Math.random()*101);
+		// chance = Math.floor(Math.random()*101);
 		// if (chance/100 < randomFire) {
 		// 	this.fire();
 		// }
@@ -634,7 +636,7 @@ function Game(){
             let shipStartPosX = (this.shipCanvas.width / 2) - (SHIP.width / 2);
             let shipStartPosY = (this.shipCanvas.height / 2) + 150;
 
-            this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height);
+            this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height+20);
 
         this.mainCanvas = document.getElementById('main');
         this.mainContext = this.mainCanvas.getContext('2d');    
@@ -649,14 +651,16 @@ function Game(){
             Enemy.prototype.canvasHeight = this.mainCanvas.height;    
             this.enemyShip = new AmmoSupply();
             this.enemyShip.initialize('enemyShip');
-            let x = 100;
-            let y = 50;
-            var spacer = y * 1.5;
-			for (var i = 1; i <= 18; i++) {
+            // let x = 350;
+            // let y = -10;
+            let x = 650;
+            let y = -10;
+            let spacer = y * 8;
+			for (let i = 1; i <= 8; i++) {
 				this.enemyShip.shoot(x,y);
 				x += ENEMY1.width + 25;
-				if (i % 6 == 0) {
-					x = 100;
+				if (i % 4 == 0) {
+					x -= 350;
 					y += spacer
 				}
 			}
@@ -676,8 +680,8 @@ function Game(){
 function animate(){
     window.requestAnimationFrame(animate); //lets the browser know to animate something
     game.background.draw();
+    game.ship.drawFire();
     game.ship.draw();
-    // game.ship.drawFire();
     game.ship.move();
     game.ship.ammoSupply.animateFiring();
 

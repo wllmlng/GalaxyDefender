@@ -4,6 +4,7 @@
     flex-direction: column;
     background-color: black;
     margin-bottom: 50px;
+    background: url('img/bg_uniq.png');
 }
 
 .header{
