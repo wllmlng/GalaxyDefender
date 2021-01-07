@@ -215,6 +215,8 @@ const BACKGROUND = new Image();
     BACKGROUND.src = '../stylesheets/img/bg.png';
 const SHIP = new Image();
     SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';    
+const ACCEL = new Image();
+    ACCEL.src = './stylesheets/img/ship/Exhaust_Frame_05.png';    
 const BLASTER = new Image();
     BLASTER.src = '../stylesheets/img/blaster/laserBlue01.png';
 const ENEMY1 = new Image();
@@ -263,7 +265,7 @@ Background.prototype = new Drawable();
                                         //!BLASTER / ZAPPER
 
 function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
-	let bulletAmt = 5; // pool size to recycle 
+	let bulletAmt = 25; // pool size to recycle 
     let pool = [];
     
 
@@ -471,7 +473,6 @@ function onKeyUp(e){
 
 
 function Ship(){
-    this.accelAni = document.getElementById('accel');
     this.thrust = false;
 
     this.speed = 5; //speed of ship movement
@@ -480,6 +481,16 @@ function Ship(){
     // this.ammoSupply.initialize();   //creates ammo collection (objPool)
     //!TEST
     this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
+
+
+    // this.drawFire = function() {
+    //     if (ship.thrust === true) {
+    //         this.context.drawImage(ACCEL, this.x + 15, this.y + 50, 35, 40);
+    //         this.context.drawImage(ACCEL, this.x + 4, this.y + 50, 35, 40);
+    //     } else {
+    //         this.thrust = false;
+    //     }
+    // }
     //!TEST
 
     let fireCoolDown = 15; 
@@ -505,6 +516,7 @@ function Ship(){
             }
             if (KEY_PRESS.up) {
                 this.y <= 0 ? this.y = 0 : this.y -= this.speed
+
             }
             if (KEY_PRESS.down) {
                 this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
@@ -521,9 +533,9 @@ function Ship(){
 
 
 	this.fire = function() {
-        // this.ammoSupply.shoot(this.x+17, this.y);
-        this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
-        // this.ammoSupply.shootThree(this.x-10, this.y, this .x +42, this.y, this.x+17, this.y);
+        // this.ammoSupply.shoot(this.x+23, this.y);
+        this.ammoSupply.shootTwo(this.x+8, this.y, this.x+35 , this.y);
+        // this.ammoSupply.shootThree(this.x, this.y, this.x+44, this.y, this.x+23, this.y);
 	};
 }
 Ship.prototype = new Drawable();
@@ -665,6 +677,7 @@ function animate(){
     window.requestAnimationFrame(animate); //lets the browser know to animate something
     game.background.draw();
     game.ship.draw();
+    // game.ship.drawFire();
     game.ship.move();
     game.ship.ammoSupply.animateFiring();
 
