@@ -271,15 +271,36 @@ function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
     
 
     //fills up our arr with a collection of blaster objects to RECYCLE
-    this.initialize = function () {
+    this.initialize = function (team) {
 
-
-        for ( let i = 0; i < bulletAmt; i ++){
-            let bullet = new Blaster();
-            bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
-            pool.push(bullet);
+        // for ( let i = 0; i < bulletAmt; i ++){
+        //     let bullet = new Blaster();
+        //     bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
+        //     pool.push(bullet);
+        // }
+        // console.log('blasterAmmo',pool)
+        if( team === 'blaster' ){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let bullet = new Blaster('blaster');
+                bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
+                pool.push(bullet);
+            }
+            console.log('blasterAmmo', pool)
+        }else if ( team === 'zapper'){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let zap = new Blaster('zapper');
+                zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
+                pool.push(zap);
+            }
+            console.log('zapperAmmo', pool)
+        }else if (team === 'enemyShip'){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let enemy = new Enemy();
+                enemy.initialize(0, 0, ENEMY1.width, ENEMY1.height);
+                pool.push(enemy);
+            }
         }
-        console.log('blasterAmmo',pool)
+
     }
 
     //checking to see if the bullet has been fired
@@ -440,7 +461,10 @@ function Ship(){
     this.speed = 5; //speed of ship movement
 
     this.ammoSupply = new AmmoSupply(); 
-    this.ammoSupply.initialize();   //creates ammo collection (objPool)
+    // this.ammoSupply.initialize();   //creates ammo collection (objPool)
+    //!TEST
+    this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
+    //!TEST
 
     let fireCoolDown = 15; 
     let coolDownCounter = 0; //shoot once every 15 frame
@@ -555,7 +579,4 @@ function initialize(){
     game.initialize();
     game.start();
 }
-
-
-
 
