@@ -3,7 +3,7 @@
     justify-content: center;
     flex-direction: column;
     background-color: black;
-    /* padding-bottom: 50px; */
+    margin-bottom: 50px;
 }
 
 .header{
@@ -29,7 +29,7 @@
 
 
 .game_container{
-    background-color: black;
+    /* background-color: black; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -89,4 +89,11 @@
 #ship{
     /* background-color: green; */
     z-index: 0;
+}
+
+#test{
+    display: flex;
+    align-content: flex-end;
+    padding-bottom: 800px;
+    bottom: 100%;
 }
