@@ -235,7 +235,11 @@ const SKULLBOSS = new Image();
 // AUDIO
 // const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
-BLASTERSOUND.volume = 0.3
+BLASTERSOUND.volume = 0.6
+
+
+
+
 
 
 
@@ -361,7 +365,7 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
         for (let i = 0; i < bulletAmt; i++) {
             if (pool[i] === undefined){
                 break;
-            }
+            }else
             if (pool[i].fired === true) {
                 pool[i].draw()
             }
@@ -576,7 +580,7 @@ Ship.prototype = new Drawable();
 
 function Enemy(monster){
     let randomFire = .01;
-    let chance;
+    let chanceOfFire = 0
     this.monster = monster;
 
     this.fired = false;
@@ -619,16 +623,26 @@ function Enemy(monster){
             this.context.drawImage(SPIDERBOSS, this.x, this.y);
         }
         
-		// Enemy has a chance to shoot every movement
-		chance = Math.floor(Math.random()*101);
-		if (chance/100 < randomFire) {
-			this.fire();
-		}
+
+        // Enemy has a chance to shoot every movement
+        // if(this.monster === 'enemyBoss'){
+        //     if (chanceOfFire < randomFire + 90) {
+        //         this.fire();
+        //     }
+        // }else{
+            // if (chanceOfFire < randomFire) {
+            //     this.fire();
+            // }
+        // }
+        chance = Math.floor(Math.random() * 101);
+        if (chance/100 < randomFire){
+            this.fire();
+        }
     };    
     
 	this.fire = function() {
-        // game.enemyAmmo.shoot(this.x-203, this.y);
-        game.enemyAmmo.shoot(this.x, this.y);
+        game.enemyAmmo.shoot(this.x+30, this.y+40);
+        // game.enemyAmmo.shoot(this.x, this.y);
     }
     
     //resets the blaster object so we can reuse it in our pool
@@ -698,8 +712,8 @@ function Game(){
 
 
             //levels
-            // this.formation1();
-            this.boss1();
+            this.formation1();
+            // this.boss1();
 
             this.enemyAmmo = new AmmoSupply();
             this.enemyAmmo.initialize('zapper');
