@@ -215,6 +215,7 @@ const BACKGROUND = new Image();
     BACKGROUND.src = '../stylesheets/img/bg_vert.png';
 const SHIP = new Image();
     SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';    
+    // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_55.png';    
 const ACCEL = new Image();
     ACCEL.src = './stylesheets/img/ship/Exhaust_Frame_05.png';    
 const BLASTER = new Image();
@@ -222,8 +223,14 @@ const BLASTER = new Image();
 const ENEMY1 = new Image();
     ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003_60.png';    
 const ZAPPER = new Image();
-    ZAPPER.src = '../stylesheets/img/blaster/bullet_enemy.png';        
-    // ZAPPER.src = '../stylesheets/img/blaster/laserBlue01.png';        
+    // ZAPPER.src = '../stylesheets/img/blaster/Minigun_Small.png';        
+    ZAPPER.src = '../stylesheets/img/blaster/Laser_Small_green.png';   
+    // ZAPPER.src = '../stylesheets/img/blaster/Plasma_Small_purp.png';   
+    
+
+
+
+    
 
 
 
@@ -369,7 +376,7 @@ function Blaster(good_evil){
     this.create = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
-        this.speed = 10;
+        team === "blaster" ? this.speed = 10 : this.speed = 5
         this.fired = true;
     }
     
@@ -444,11 +451,14 @@ function onKeyPress(e){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
         SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_left.png';
+        // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_left_55.png';
+        
 
     }else if( key === MOVE_DIR.right ){
         e.preventDefault(); 
         KEY_PRESS.right = true;
         SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_right.png';
+        // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_right_55.png';
 
     }else if ( key === MOVE_DIR.up){
         e.preventDefault(); 
@@ -471,10 +481,12 @@ function onKeyUp(e){
 
     if(key === MOVE_DIR.left){  
         SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png'; 
+        // SHIP.src = './stylesheets/img/ship/blue/PlayerBlue_Frame_55.png'; 
         KEY_PRESS.left = false;
 
     }else if( key === MOVE_DIR.right ){
         SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png';
+        // SHIP.src = './stylesheets/img/ship/blue/PlayerBlue_Frame_55.png'; 
         KEY_PRESS.right = false;
 
     }else if ( key === MOVE_DIR.up){
@@ -575,7 +587,7 @@ function Enemy(){
         this.x = x;  //enemy ship start pos (init 650)
         this.y = y;  //enemy ship start pos (init -10)
         this.speed = 5; 
-		this.speedX = 2; // speed they descend hori/diag
+		this.speedX = 3; // speed they descend hori/diag
 		this.speedY = 1; // speed they descend vert/diag
         this.fired = true;
         this.leftBorder = this.x - 750; // how far left they can go
