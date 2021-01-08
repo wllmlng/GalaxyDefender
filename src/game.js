@@ -212,15 +212,21 @@
 //!~~~~~~~~~~~~~~~~~~~CANVAS ATTEMPT~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const BACKGROUND = new Image();
-    BACKGROUND.src = './stylesheets/img/bg.png';
+    BACKGROUND.src = '../stylesheets/img/bg_vert.png';
 const SHIP = new Image();
-    SHIP.src = './stylesheets/img/ship/player_cool.png';
+    SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_01_55.png';    
+    // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_55.png';    
+const ACCEL = new Image();
+    ACCEL.src = './stylesheets/img/ship/Exhaust_Frame_05.png';    
 const BLASTER = new Image();
     BLASTER.src = './stylesheets/img/blaster/laserBlue01.png';
 const ENEMY1 = new Image();
-    ENEMY1.src = './stylesheets/img/enemy/spaceShips_003.png';    
+    ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003_60.png';    
 const ZAPPER = new Image();
-    ZAPPER.src = './stylesheets/img/blaster/bullet_enemy.png';        
+    // ZAPPER.src = '../stylesheets/img/blaster/Minigun_Small.png';        
+    ZAPPER.src = '../stylesheets/img/blaster/Laser_Small_green.png';   
+    // ZAPPER.src = '../stylesheets/img/blaster/Plasma_Small_purp.png';   
+    
 
 
 
@@ -262,34 +268,49 @@ Background.prototype = new Drawable();
 
                                         //!BLASTER / ZAPPER
 
-function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
-	let bulletAmt = 30; // pool size to recycle 
+function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
+	let bulletAmt = 50; //! pool size to recycle 
     let pool = [];
-    //!TEST
-    let enemyPool = [];
-    //!TEST
     
 
     //fills up our arr with a collection of blaster objects to RECYCLE
-    this.initialize = function () {
+    this.initialize = function(team) {
 
-
-        for ( let i = 0; i < bulletAmt; i ++){
-            let bullet = new Blaster();
-            bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
-            pool.push(bullet);
+        if( team === 'blaster' ){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let bullet = new Blaster('blaster');
+                bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
+                pool.push(bullet);
+            }
         }
-        console.log('blasterAmmo',pool)
-    }
 
-    //checking to see if the bullet has been fired
+        if ( team === 'enemyShip'){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let enemy = new Enemy();
+                enemy.initialize(0, 0, ENEMY1.width, ENEMY1.height);
+                pool.push(enemy);
+                // console.log('297 - fine',enemy)
+            }
+        }
+
+        if (team === 'zapper'){
+            for ( let i = 0; i < bulletAmt; i ++){
+                let zap = new Blaster('zapper');
+                zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
+                pool.push(zap);
+                // console.log('305 - fine',zap)
+            }
+        }
+
+    }
+    //checking to see if the item has been fired
     //if false, it will move it to the front for grabs
 	this.shoot = function(x, y) {
         let lastShot = pool[pool.length - 1] //pool[-1]
 		if(lastShot.fired === false) {
-            let bullet = pool.pop();
-			bullet.blaster(x, y);
-			pool.unshift(bullet); //moves used bullet to the front of arr 
+            let item = pool.pop();
+			item.create(x, y);
+			pool.unshift(item); //moves used item to the front of arr 
 		}                         
     };
     
@@ -312,16 +333,32 @@ function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
             this.shoot(x2, y2);
             this.shoot(x3, y3);
         }
-	};
+    };
     
-    //if object is flipped true, this will animate the blaster and render it
-	this.animateFiring = function() {
+
+    //!TEST
+    
+    // if object is flipped true, this will animate the blaster and render it
+	// this.animateFiring = function() {
+	// 	for (let i = 0; i < bulletAmt; i++) {
+	// 		if (pool[i].fired === true) {
+    //             pool[i].draw()
+	// 		};
+            
+	// 	}
+    // };
+    
+    this.animateFiring = function() {
 		for (let i = 0; i < bulletAmt; i++) {
-			if (pool[i].fired === true) {
-                pool[i].draw()
+			if (pool[i].fired) {
+				if (pool[i].draw()) {
+					pool[i].clear();
+					pool.push((pool.splice(i,1))[0]);
+				}
 			}
 		}
-	};
+    };
+    //!TEST
 }
 
 
@@ -329,18 +366,20 @@ function AmmoSupply() { //OBJECT POOL TO RECYCLE BLASTERS
    
 function Blaster(good_evil){
     let team = good_evil;
+    
     this.fired = false;
 
-    this.blaster = function(x, y){  //x and y provided but the ship fire function
+    this.create = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
-        this.speed = 10;
+        team === "blaster" ? this.speed = 10 : this.speed = 5
         this.fired = true;
     }
     
     this.draw = function(){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
-        this.y -= this.speed;
+        team === 'blaster' ? this.y -= this.speed : this.y += this.speed;
+        // this.y -= this.speed;
         // if (this.y <= 0 ) {
         //     this.resetBulletObj()
         //     console.log('reseting')
@@ -354,14 +393,15 @@ function Blaster(good_evil){
         //!TESTING
         if (team === 'blaster' && this.y <= 0 ) {
             this.resetBulletObj()
-            console.log('reseting')
-        } else if( team === 'zapper' && this.y >= 650 ){
+            console.log('blast reseting')
+        } else if( team === 'zapper' && this.y >= this.y >= this.canvasHeight ){
             this.resetBulletObj()
-        }else {
+            conole.log('zap reseting')
+        }
+        else {
             team === 'zapper' ? 
-            this.context.drawImage(ZAPPER, this.x, this.y) :
+            this.context.drawImage(ZAPPER, this.x, this.y) : 
             this.context.drawImage(BLASTER, this.x, this.y) 
-            
         }
         //!TESTING
     }
@@ -376,6 +416,7 @@ function Blaster(good_evil){
 
 }
 Blaster.prototype = new Drawable();                                        
+
 
 
 
@@ -400,19 +441,32 @@ const KEY_PRESS = {
 
 window.addEventListener('keydown', onKeyPress);
 function onKeyPress(e){
-    e.preventDefault(); //prevents browser scroll
     let key = e.code;
     // console.log(e)
     if(key === MOVE_DIR.left){
+        e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
-        // console.log(KEY_PRESS.left)
+        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_left.png';
+        // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_left_55.png';
+        
+
     }else if( key === MOVE_DIR.right ){
+        e.preventDefault(); 
         KEY_PRESS.right = true;
+        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_right.png';
+        // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_right_55.png';
+
     }else if ( key === MOVE_DIR.up){
+        e.preventDefault(); 
         KEY_PRESS.up = true;
+        ship.thrust = true;
+
     }else if ( key === MOVE_DIR.down ){
+        e.preventDefault(); 
         KEY_PRESS.down = true;
+
     }else if ( key === MOVE_DIR.space ){
+        e.preventDefault(); 
         KEY_PRESS.space = true;
     }
 }
@@ -421,14 +475,23 @@ window.addEventListener('keyup', onKeyUp);
 function onKeyUp(e){
     let key = e.code;
 
-    if(key === MOVE_DIR.left){   
+    if(key === MOVE_DIR.left){  
+        SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png'; 
+        // SHIP.src = './stylesheets/img/ship/blue/PlayerBlue_Frame_55.png'; 
         KEY_PRESS.left = false;
+
     }else if( key === MOVE_DIR.right ){
+        SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png';
+        // SHIP.src = './stylesheets/img/ship/blue/PlayerBlue_Frame_55.png'; 
         KEY_PRESS.right = false;
+
     }else if ( key === MOVE_DIR.up){
         KEY_PRESS.up = false;
+        ship.thrust = false;
+
     }else if ( key === MOVE_DIR.down ){
         KEY_PRESS.down = false;
+
     }else if ( key === MOVE_DIR.space ){
         KEY_PRESS.space = false;
     }
@@ -436,14 +499,30 @@ function onKeyUp(e){
 
 
 function Ship(){
+    this.thrust = false;
 
-    this.speed = 5; //speed of ship movement
+    this.speed = 4; //speed of ship movement
 
     this.ammoSupply = new AmmoSupply(); 
-    this.ammoSupply.initialize();   //creates ammo collection (objPool)
 
-    let fireCoolDown = 15; 
-    let coolDownCounter = 0; //shoot once every 15 frame
+    // this.ammoSupply.initialize();   //creates ammo collection (objPool)
+    //!TEST
+    this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
+    
+    //!TEST
+
+
+    this.accelAnim = function() {
+        if (ship.thrust === true) {
+            this.context.drawImage(ACCEL, this.x + 15, this.y + 39, 35, 40);
+            this.context.drawImage(ACCEL, this.x + 4, this.y + 39, 35, 40);
+        } else {
+            this.thrust = false;
+        }
+    }
+
+    let fireCoolDown = 25; 
+    let coolDownCounter = 0; //shoot once every 25 frame
 
     this.draw = function(){
         this.context.drawImage(SHIP, this.x, this.y);
@@ -465,12 +544,14 @@ function Ship(){
             }
             if (KEY_PRESS.up) {
                 this.y <= 0 ? this.y = 0 : this.y -= this.speed
+                this.accelAnim();
             }
             if (KEY_PRESS.down) {
                 this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
             }
 
             this.draw();
+            // this.accelAnim();
         }    
 		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
             this.fire();
@@ -479,19 +560,91 @@ function Ship(){
 
     }
 
+
 	this.fire = function() {
-        this.ammoSupply.shoot(this.x+17, this.y);
-        // this.ammoSupply.shootTwo(this.x+3, this.y, this.x+30, this.y);
-        // this.ammoSupply.shootThree(this.x-10, this.y, this .x +42, this.y, this.x+17, this.y);
+        // this.ammoSupply.shoot(this.x+23, this.y);
+        this.ammoSupply.shootTwo(this.x+8, this.y, this.x+35 , this.y);
+        // this.ammoSupply.shootThree(this.x, this.y, this.x+44, this.y, this.x+23, this.y);
 	};
 }
 Ship.prototype = new Drawable();
 
 
 
+                                    //! ENEMY SHIP
+
+function Enemy(){
+    let randomFire = .001;
+    let chance = 0;
+
+    this.fired = false;
+
+    this.create = function(x, y){ 
+        this.x = x;  //enemy ship start pos (init 650)
+        this.y = y;  //enemy ship start pos (init -10)
+        this.speed = 5; 
+		this.speedX = 3; // speed they descend hori/diag
+		this.speedY = 1; // speed they descend vert/diag
+        this.fired = true;
+        this.leftBorder = this.x - 750; // how far left they can go
+		this.rightBorder = this.x - 330;
+        this.bottomBorder = this.y + 300; // how far down they can go
+        this.topBorder = this.y + 200; // how far down they can go
+    }
+
+    this.draw = function(){
+        this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);
+        this.x -= this.speedX;
+        this.y += this.speedY;
+        if (this.x === this.leftBorder) {
+            this.speedX = -3;
+            this.speedY = -1;
+        }
+        if( this.x === this.rightBorder){
+            this.speedX = 1;
+        }
+        if( this.y === this.topBorder){
+            this.speedY = 1;
+        }
+        if( this.y === this.bottomBorder){
+            this.speedY = -1;
+        }
+
+        this.context.drawImage(ENEMY1, this.x, this.y);
+        
+		// Enemy has a chance to shoot every movement
+		chance = Math.floor(Math.random()*101);
+		if (chance/100 < randomFire) {
+			this.fire();
+		}
+	};
+	/*
+	 * Fires a bullet
+	 */
+    
+	this.fire = function() {
+        // this.ammoSupply.shoot(this.x+23, this.y);
+        game.enemyAmmo.shoot(this.x, this.y);
+    }
+    
+	/*
+	 * Resets the enemy values
+	 */
+	this.clear = function() {
+		this.x = 0;
+		this.y = 0;
+		this.speed = 0;
+		this.speedX = 0;
+		this.speedY = 0;
+		this.fired = false;
+	};
+}
+Enemy.prototype = new Drawable();
+               
 
 
                                     //! GAME
+
 function Game(){
     this.initialize = function(){
         this.bgCanvas = document.getElementById('background');
@@ -520,7 +673,7 @@ function Game(){
             let shipStartPosX = (this.shipCanvas.width / 2) - (SHIP.width / 2);
             let shipStartPosY = (this.shipCanvas.height / 2) + 150;
 
-            this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height);
+            this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height+20);
 
         this.mainCanvas = document.getElementById('main');
         this.mainContext = this.mainCanvas.getContext('2d');    
@@ -529,7 +682,31 @@ function Game(){
             Blaster.prototype.canvasWidth = this.mainCanvas.width;  //width="800"
             Blaster.prototype.canvasHeight = this.mainCanvas.height;//height="650"
             // console.log(this.mainContext) 
+        //!TEST
+            Enemy.prototype.context = this.mainContext;
+            Enemy.prototype.canvasWidth = this.mainCanvas.width;
+            Enemy.prototype.canvasHeight = this.mainCanvas.height;    
+            this.enemyShip = new AmmoSupply();
+            this.enemyShip.initialize('enemyShip');
 
+            //creating multiple ships....possibly separate for diff levels
+            let x = 650;
+            let y = -10;
+            let spacer = y * 7;
+			for (let i = 1; i <= 18; i++) {
+				this.enemyShip.shoot(x,y);
+				x += ENEMY1.width + 25;
+				if (i % 6 === 0) {
+					x -= 400;
+					y += spacer
+				}
+            }
+
+            this.enemyAmmo = new AmmoSupply();
+            this.enemyAmmo.initialize('zapper');
+
+        //!TEST
+            
     }
 
     this.start = function(){
@@ -541,9 +718,13 @@ function Game(){
 function animate(){
     window.requestAnimationFrame(animate); //lets the browser know to animate something
     game.background.draw();
+    game.ship.accelAnim();
     game.ship.draw();
     game.ship.move();
     game.ship.ammoSupply.animateFiring();
+
+    game.enemyShip.animateFiring();
+    game.enemyAmmo.animateFiring();
 
 }
 
@@ -555,7 +736,4 @@ function initialize(){
     game.initialize();
     game.start();
 }
-
-
-
 

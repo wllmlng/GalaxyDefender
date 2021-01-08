@@ -3,7 +3,13 @@
     justify-content: center;
     flex-direction: column;
     background-color: black;
-    /* padding-bottom: 50px; */
+    margin-bottom: 50px;
+    background: url('img/bg_uniq.png') no-repeat center center fixed;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .header{
@@ -29,7 +35,7 @@
 
 
 .game_container{
-    background-color: black;
+    /* background-color: black; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,7 +73,7 @@
 /*! TEST */
 #background{
     /* border: 2px solid lightgrey; */
-    background-color: yellow;
+    background-color: blue;
     /* background: url('img/background_purp.png'); */
     width: 800px;
     height: 650px;
@@ -89,4 +95,11 @@
 #ship{
     /* background-color: green; */
     z-index: 0;
+}
+
+#test{
+    display: flex;
+    align-content: flex-end;
+    padding-bottom: 800px;
+    bottom: 100%;
 }
