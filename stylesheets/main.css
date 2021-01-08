@@ -4,7 +4,12 @@
     flex-direction: column;
     background-color: black;
     margin-bottom: 50px;
-    background: url('img/bg_uniq.png');
+    background: url('img/bg_uniq.png') no-repeat center center fixed;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .header{
@@ -68,7 +73,7 @@
 /*! TEST */
 #background{
     /* border: 2px solid lightgrey; */
-    background-color: yellow;
+    background-color: blue;
     /* background: url('img/background_purp.png'); */
     width: 800px;
     height: 650px;

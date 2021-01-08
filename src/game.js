@@ -223,6 +223,7 @@ const ENEMY1 = new Image();
     ENEMY1.src = '../stylesheets/img/enemy/spaceShips_003_60.png';    
 const ZAPPER = new Image();
     ZAPPER.src = '../stylesheets/img/blaster/bullet_enemy.png';        
+    // ZAPPER.src = '../stylesheets/img/blaster/laserBlue01.png';        
 
 
 
@@ -265,19 +266,12 @@ Background.prototype = new Drawable();
                                         //!BLASTER / ZAPPER
 
 function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
-	let bulletAmt = 25; // pool size to recycle 
+	let bulletAmt = 50; //! pool size to recycle 
     let pool = [];
     
 
     //fills up our arr with a collection of blaster objects to RECYCLE
-    this.initialize = function (team) {
-
-        // for ( let i = 0; i < bulletAmt; i ++){
-        //     let bullet = new Blaster();
-        //     bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
-        //     pool.push(bullet);
-        // }
-        // console.log('blasterAmmo',pool)
+    this.initialize = function(team) {
 
         if( team === 'blaster' ){
             for ( let i = 0; i < bulletAmt; i ++){
@@ -306,15 +300,14 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
         }
 
     }
-    //checking to see if the bullet has been fired
+    //checking to see if the item has been fired
     //if false, it will move it to the front for grabs
 	this.shoot = function(x, y) {
         let lastShot = pool[pool.length - 1] //pool[-1]
-
 		if(lastShot.fired === false) {
-            let bullet = pool.pop();
-			bullet.create(x, y);
-			pool.unshift(bullet); //moves used bullet to the front of arr 
+            let item = pool.pop();
+			item.create(x, y);
+			pool.unshift(item); //moves used item to the front of arr 
 		}                         
     };
     
@@ -337,19 +330,32 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
             this.shoot(x2, y2);
             this.shoot(x3, y3);
         }
-	};
-    
-    // if object is flipped true, this will animate the blaster and render it
-	this.animateFiring = function() {
-
-		for (let i = 0; i < bulletAmt; i++) {
-			if (pool[i].fired === true) {
-                pool[i].draw()
-			};
-            
-		}
     };
     
+
+    //!TEST
+    
+    // if object is flipped true, this will animate the blaster and render it
+	// this.animateFiring = function() {
+	// 	for (let i = 0; i < bulletAmt; i++) {
+	// 		if (pool[i].fired === true) {
+    //             pool[i].draw()
+	// 		};
+            
+	// 	}
+    // };
+    
+    this.animateFiring = function() {
+		for (let i = 0; i < bulletAmt; i++) {
+			if (pool[i].fired) {
+				if (pool[i].draw()) {
+					pool[i].clear();
+					pool.push((pool.splice(i,1))[0]);
+				}
+			}
+		}
+    };
+    //!TEST
 }
 
 
@@ -369,7 +375,8 @@ function Blaster(good_evil){
     
     this.draw = function(){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
-        this.y -= this.speed;
+        team === 'blaster' ? this.y -= this.speed : this.y += this.speed;
+        // this.y -= this.speed;
         // if (this.y <= 0 ) {
         //     this.resetBulletObj()
         //     console.log('reseting')
@@ -383,14 +390,15 @@ function Blaster(good_evil){
         //!TESTING
         if (team === 'blaster' && this.y <= 0 ) {
             this.resetBulletObj()
-            console.log('reseting')
-        } else if( team === 'zapper' && this.y >= 650 ){
+            console.log('blast reseting')
+        } else if( team === 'zapper' && this.y >= this.y >= this.canvasHeight ){
             this.resetBulletObj()
-        }else {
+            conole.log('zap reseting')
+        }
+        else {
             team === 'zapper' ? 
-            this.context.drawImage(ZAPPER, this.x, this.y) :
+            this.context.drawImage(ZAPPER, this.x, this.y) : 
             this.context.drawImage(BLASTER, this.x, this.y) 
-            
         }
         //!TESTING
     }
@@ -405,6 +413,7 @@ function Blaster(good_evil){
 
 }
 Blaster.prototype = new Drawable();                                        
+
 
 
 
@@ -435,18 +444,23 @@ function onKeyPress(e){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
         SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_left.png';
+
     }else if( key === MOVE_DIR.right ){
-        e.preventDefault(); //prevents browser scroll
+        e.preventDefault(); 
         KEY_PRESS.right = true;
         SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_right.png';
+
     }else if ( key === MOVE_DIR.up){
-        e.preventDefault(); //prevents browser scroll
+        e.preventDefault(); 
         KEY_PRESS.up = true;
         ship.thrust = true;
+
     }else if ( key === MOVE_DIR.down ){
-        e.preventDefault(); //prevents browser scroll
+        e.preventDefault(); 
         KEY_PRESS.down = true;
+
     }else if ( key === MOVE_DIR.space ){
+        e.preventDefault(); 
         KEY_PRESS.space = true;
     }
 }
@@ -457,16 +471,19 @@ function onKeyUp(e){
 
     if(key === MOVE_DIR.left){  
         SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png'; 
-        
         KEY_PRESS.left = false;
+
     }else if( key === MOVE_DIR.right ){
         SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_01_55.png';
         KEY_PRESS.right = false;
+
     }else if ( key === MOVE_DIR.up){
         KEY_PRESS.up = false;
         ship.thrust = false;
+
     }else if ( key === MOVE_DIR.down ){
         KEY_PRESS.down = false;
+
     }else if ( key === MOVE_DIR.space ){
         KEY_PRESS.space = false;
     }
@@ -479,12 +496,15 @@ function Ship(){
     this.speed = 4; //speed of ship movement
 
     this.ammoSupply = new AmmoSupply(); 
+
     // this.ammoSupply.initialize();   //creates ammo collection (objPool)
     //!TEST
     this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
+    
+    //!TEST
 
 
-    this.drawFire = function() {
+    this.accelAnim = function() {
         if (ship.thrust === true) {
             this.context.drawImage(ACCEL, this.x + 15, this.y + 39, 35, 40);
             this.context.drawImage(ACCEL, this.x + 4, this.y + 39, 35, 40);
@@ -492,10 +512,9 @@ function Ship(){
             this.thrust = false;
         }
     }
-    //!TEST
 
     let fireCoolDown = 25; 
-    let coolDownCounter = 0; //shoot once every 15 frame
+    let coolDownCounter = 0; //shoot once every 25 frame
 
     this.draw = function(){
         this.context.drawImage(SHIP, this.x, this.y);
@@ -517,14 +536,14 @@ function Ship(){
             }
             if (KEY_PRESS.up) {
                 this.y <= 0 ? this.y = 0 : this.y -= this.speed
-                this.drawFire();
+                this.accelAnim();
             }
             if (KEY_PRESS.down) {
                 this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
             }
 
             this.draw();
-            // this.drawFire();
+            // this.accelAnim();
         }    
 		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
             this.fire();
@@ -547,14 +566,14 @@ Ship.prototype = new Drawable();
                                     //! ENEMY SHIP
 
 function Enemy(){
-    let randomFire = .01;
+    let randomFire = .001;
     let chance = 0;
 
     this.fired = false;
 
     this.create = function(x, y){ 
-        this.x = x;  //enemy ship start pos (init 350)
-        this.y = y;  //enemy ship start pos
+        this.x = x;  //enemy ship start pos (init 650)
+        this.y = y;  //enemy ship start pos (init -10)
         this.speed = 5; 
 		this.speedX = 2; // speed they descend hori/diag
 		this.speedY = 1; // speed they descend vert/diag
@@ -574,28 +593,32 @@ function Enemy(){
             this.speedY = -1;
         }
         if( this.x === this.rightBorder){
-            this.speedX=4;
+            this.speedX = 1;
         }
         if( this.y === this.topBorder){
-            this.speedY=1;
+            this.speedY = 1;
         }
         if( this.y === this.bottomBorder){
-            this.speedY= -1;
+            this.speedY = -1;
         }
 
-		this.context.drawImage(ENEMY1, this.x, this.y);
+        this.context.drawImage(ENEMY1, this.x, this.y);
+        
 		// Enemy has a chance to shoot every movement
-		// chance = Math.floor(Math.random()*101);
-		// if (chance/100 < randomFire) {
-		// 	this.fire();
-		// }
+		chance = Math.floor(Math.random()*101);
+		if (chance/100 < randomFire) {
+			this.fire();
+		}
 	};
 	/*
 	 * Fires a bullet
 	 */
-	// this.fire = function() {
-	// 	game.enemyAmmo.shoot(this.x+this.width/2, this.y+this.height, -2.5);
-	// }
+    
+	this.fire = function() {
+        // this.ammoSupply.shoot(this.x+23, this.y);
+        game.enemyAmmo.shoot(this.x, this.y);
+    }
+    
 	/*
 	 * Resets the enemy values
 	 */
@@ -613,6 +636,7 @@ Enemy.prototype = new Drawable();
 
 
                                     //! GAME
+
 function Game(){
     this.initialize = function(){
         this.bgCanvas = document.getElementById('background');
@@ -650,14 +674,14 @@ function Game(){
             Blaster.prototype.canvasWidth = this.mainCanvas.width;  //width="800"
             Blaster.prototype.canvasHeight = this.mainCanvas.height;//height="650"
             // console.log(this.mainContext) 
-//!TEST
+        //!TEST
             Enemy.prototype.context = this.mainContext;
             Enemy.prototype.canvasWidth = this.mainCanvas.width;
             Enemy.prototype.canvasHeight = this.mainCanvas.height;    
             this.enemyShip = new AmmoSupply();
             this.enemyShip.initialize('enemyShip');
-            // let x = 350;
-            // let y = -10;
+
+            //creating multiple ships....possibly separate for diff levels
             let x = 650;
             let y = -10;
             let spacer = y * 7;
@@ -669,11 +693,11 @@ function Game(){
 					y += spacer
 				}
             }
-            
-            // this.enemyAmmo = new AmmoSupply();
-            // this.enemyAmmo.initialize('zapper');
 
-//!TEST
+            this.enemyAmmo = new AmmoSupply();
+            this.enemyAmmo.initialize('zapper');
+
+        //!TEST
             
     }
 
@@ -686,13 +710,13 @@ function Game(){
 function animate(){
     window.requestAnimationFrame(animate); //lets the browser know to animate something
     game.background.draw();
-    game.ship.drawFire();
+    game.ship.accelAnim();
     game.ship.draw();
     game.ship.move();
     game.ship.ammoSupply.animateFiring();
 
     game.enemyShip.animateFiring();
-    // game.enemyAmmo.animateFiring();
+    game.enemyAmmo.animateFiring();
 
 }
 
