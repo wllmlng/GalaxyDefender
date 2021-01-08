@@ -232,7 +232,10 @@ const SPIDERBOSS = new Image();
 const SKULLBOSS = new Image();
     SKULLBOSS.src = './stylesheets/img/boss/skullBoss.png'    
     
-
+// AUDIO
+// const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
+const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
+BLASTERSOUND.volume = 0.3
 
 
 
@@ -553,6 +556,8 @@ function Ship(){
         }    
 		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
             this.fire();
+            BLASTERSOUND.load();
+            BLASTERSOUND.play();
             coolDownCounter = 0;
         }
     }
