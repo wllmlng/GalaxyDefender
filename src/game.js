@@ -239,6 +239,7 @@ BLASTERSOUND.volume = 0.7
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.2;
 MUSIC.loop = true;
+MUSIC.autoplay = true;
 
 
 
@@ -454,14 +455,14 @@ function onKeyPress(e){
     if(key === MOVE_DIR.left){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
-        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_left.png';
+        SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_55_left.png';
         // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_left_55.png';
         
 
     }else if( key === MOVE_DIR.right ){
         e.preventDefault(); 
         KEY_PRESS.right = true;
-        SHIP.src = '../stylesheets/img/ship/PlayerRed_Frame_55_right.png';
+        SHIP.src = './stylesheets/img/ship/PlayerRed_Frame_55_right.png';
         // SHIP.src = '../stylesheets/img/ship/blue/PlayerBlue_Frame_right_55.png';
 
     }else if ( key === MOVE_DIR.up){
