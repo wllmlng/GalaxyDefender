@@ -235,7 +235,10 @@ const SKULLBOSS = new Image();
 // AUDIO
 // const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
-BLASTERSOUND.volume = 0.6
+BLASTERSOUND.volume = 0.7
+const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
+MUSIC.volume = 0.2;
+MUSIC.loop = true;
 
 
 
@@ -634,8 +637,8 @@ function Enemy(monster){
             //     this.fire();
             // }
         // }
-        chance = Math.floor(Math.random() * 101);
-        if (chance/100 < randomFire){
+        chanceOfFire = Math.floor(Math.random() * 101);
+        if (chanceOfFire/100 < randomFire){
             this.fire();
         }
     };    
@@ -719,7 +722,9 @@ function Game(){
             this.enemyAmmo.initialize('zapper');
 
         //!TEST
-            
+            MUSIC.load();
+            MUSIC.play();
+
     }
 
     // LEVELS IN EACH ROUND
