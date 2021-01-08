@@ -240,7 +240,6 @@ const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.2;
 MUSIC.loop = true;
 MUSIC.autoplay = true;
-MUSIC.muted = true;
 
 
 
