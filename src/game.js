@@ -227,11 +227,14 @@ const ZAPPER = new Image();
     // ZAPPER.src = './stylesheets/img/blaster/Minigun_Small.png';        
     ZAPPER.src = './stylesheets/img/blaster/Laser_Small_green.png';   
     // ZAPPER.src = './stylesheets/img/blaster/Plasma_Small_purp.png';   
+const SPACESHIPBOSS = new Image();
+    SPACESHIPBOSS.src = './stylesheets/img/boss/spacecraft_spaceship.png'
 const SPIDERBOSS = new Image();
     SPIDERBOSS.src = './stylesheets/img/boss/spiderBoss.png'
 const SKULLBOSS = new Image();
     SKULLBOSS.src = './stylesheets/img/boss/skullBoss.png'    
     
+
 // AUDIO
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 // const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
@@ -624,7 +627,7 @@ function Enemy(monster){
         if(this.monster === 'enemyShip'){
             this.context.drawImage(ENEMY1, this.x, this.y);
         } else if (this.monster === 'enemyBoss'){
-            this.context.drawImage(SPIDERBOSS, this.x, this.y);
+            this.context.drawImage(SPACESHIPBOSS, this.x, this.y);
         }
         
 
@@ -771,6 +774,16 @@ function animate(){
 
 }
 
+function audio_control(){
+    const musicControl = document.getElementById('vol_rocker');
+    if ( MUSIC.muted === true ){
+        MUSIC.muted = false;
+        musicControl.src = "stylesheets/audio/control/icons8-toggle-on-48.png"
+    }else{
+        MUSIC.muted = true;
+        musicControl.src = "stylesheets/audio/control/icons8-toggle-off-48.png"
+    }
+}
 
 // Initialize Game
 let game = new Game();
