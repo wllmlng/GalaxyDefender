@@ -159,6 +159,7 @@
     align-items: center;
     outline: none;
     border: none;
+    cursor: pointer;
 }
 
 .audio_control img{
