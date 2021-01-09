@@ -233,11 +233,11 @@ const SKULLBOSS = new Image();
     SKULLBOSS.src = './stylesheets/img/boss/skullBoss.png'    
     
 // AUDIO
-// const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
-const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
-BLASTERSOUND.volume = 0.7
+const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
+// const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
+BLASTERSOUND.volume = 0.35
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
-MUSIC.volume = 0.2;
+MUSIC.volume = 0.15;
 MUSIC.loop = true;
 MUSIC.autoplay = true;
 

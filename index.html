@@ -23,20 +23,25 @@
             transform: translate(-50%, -50%);
         }
         
-    </style>
+        </style>
+        <script>const startBtn = document.getElementById('startBtn');</script>
 </head>
-<body class='body_container' onload="initialize()">
+<!-- <body class='body_container' onload="initialize()"> -->
+<body class='body_container'>
     <header class='header' style="font-family:'SEGA LOGO FONT';font-weight:normal;font-size:45px">Galaxy Defender</header>
-    <p hidden > <img id="accel" src="./stylesheets/img/ship/Exhaust_Frame_05.png"> </p>    
-    <div class='game_container'>
 
+    <div class='menu'>
+
+
+        <button type="button" id="startBtn" onclick="initialize()">Start Game</button>
+    </div>
+
+    <div class='game_container'>
         <canvas id='background' width="360" height="600"></canvas>
         <!-- size of the background image  -->
         <canvas id='main' width="800" height="650"></canvas> 
         <canvas id='ship' width="800" height="650"></canvas> 
         <!-- size of the entire canvas -->
-            
-        
         <!-- <div id='game'></div> -->
 
   
