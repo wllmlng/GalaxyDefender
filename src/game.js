@@ -724,7 +724,7 @@ function Game(){
 
         //!TEST
             MUSIC.load();
-            // MUSIC.play();
+            MUSIC.play();
 
     }
 
@@ -771,6 +771,16 @@ function animate(){
 
 }
 
+function audio_control(){
+    const musicControl = document.getElementById('vol_rocker');
+    if ( MUSIC.muted === true ){
+        MUSIC.muted = false;
+        musicControl.src = "stylesheets/audio/control/icons8-toggle-on-48.png"
+    }else{
+        MUSIC.muted = true;
+        musicControl.src = "stylesheets/audio/control/icons8-toggle-off-48.png"
+    }
+}
 
 // Initialize Game
 let game = new Game();

@@ -88,7 +88,7 @@
 
 .instructions button{
     margin-bottom: 50px;
-    font-size: 20px;
+    font-size: 25px;
     font-family: 'spaceFont',
     Arial,
     sans-serif;
@@ -143,6 +143,31 @@
 }
 
 
+
+/* audio */
+.audio_control{
+    display:flex;
+    justify-content: center;
+    margin-left: 740px;
+    background-color: none;
+}
+.audio_control button{
+    /* border: 0; */
+    background-color: transparent;
+    color: white;
+    display: flex;
+    align-items: center;
+    outline: none;
+    border: none;
+}
+
+.audio_control img{
+    margin-left: 5px;
+}
+
+#vol_rocker{
+    background: none;
+}
 
 /* navbar */
 .sidenav {

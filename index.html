@@ -24,6 +24,19 @@
         }
         
     </style>
+    <script>
+        const menu = document.getElementById('menu');
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("about").style.marginLeft = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("about").style.marginLeft= "0";
+        }
+    
+    </script>
     
 </head>
 <!-- <body class='body_container' onload="initialize()"> -->
@@ -59,24 +72,17 @@
         <canvas id='ship' width="800" height="650"></canvas> 
         <!-- size of the entire canvas -->
         <!-- <div id='game'></div> -->
-
-  
+        
     </div>
+    <div class='audio_control'>
+        <button type="button" onclick="audio_control()">Music
+            <img src="stylesheets/audio/control/icons8-toggle-on-48.png" width="25" height="auto" id='vol_rocker'>
+        </button>
+    </div>
+    
 
     <script type="application/javascript" src="src/game.js"></script>
-    <script>
-        const menu = document.getElementById('menu');
-        function openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-            document.getElementById("about").style.marginLeft = "250px";
-        }
 
-        function closeNav() {
-            document.getElementById("mySidenav").style.width = "0";
-            document.getElementById("about").style.marginLeft= "0";
-        }
-    
-    </script>
     <footer id='test'>
     </footer>
 </body>
