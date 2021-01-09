@@ -724,7 +724,7 @@ function Game(){
 
         //!TEST
             MUSIC.load();
-            MUSIC.play();
+            // MUSIC.play();
 
     }
 
@@ -778,5 +778,6 @@ let game = new Game();
 function initialize(){
     game.initialize();
     game.start();
+    this.menu.style.display = "none";
 }
 

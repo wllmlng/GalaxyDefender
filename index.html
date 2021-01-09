@@ -23,17 +23,22 @@
             transform: translate(-50%, -50%);
         }
         
-        </style>
-        <script>const startBtn = document.getElementById('startBtn');</script>
+    </style>
+    
+    <script>const menu = document.getElementById('menu');</script>
 </head>
 <!-- <body class='body_container' onload="initialize()"> -->
 <body class='body_container'>
     <header class='header' style="font-family:'SEGA LOGO FONT';font-weight:normal;font-size:45px">Galaxy Defender</header>
 
-    <div class='menu'>
-
-
-        <button type="button" id="startBtn" onclick="initialize()">Start Game</button>
+    <div id='menu'>
+        <img src="stylesheets/img/ship/PlayerRed_Frame_01_Original.png" alt="menu_ship" width="190" height="auto">
+        <div class='instructions'>
+            <button type="button" id="startBtn" onclick="initialize()">CLICK HERE TO START!</button>
+            <div>HOW TO PLAY:</div>
+            <div>CLICK SPACE TO SHOOT</div>
+            <div>USE ARROW KEYS TO MOVE</div>
+        </div>
     </div>
 
     <div class='game_container'>
