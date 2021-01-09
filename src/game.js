@@ -724,7 +724,7 @@ function Game(){
 
         //!TEST
             MUSIC.load();
-            // MUSIC.play();
+            MUSIC.play();
 
     }
 
