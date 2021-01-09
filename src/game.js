@@ -235,7 +235,7 @@ const SKULLBOSS = new Image();
 // AUDIO
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 // const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
-BLASTERSOUND.volume = 0.5
+BLASTERSOUND.volume = 0.4
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.3;
 MUSIC.loop = true;
@@ -724,7 +724,7 @@ function Game(){
 
         //!TEST
             MUSIC.load();
-            // MUSIC.play();
+            MUSIC.play();
 
     }
 
