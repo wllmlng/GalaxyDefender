@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galaxy Defender</title>
     <link rel='stylesheet' href='./stylesheets/main.css'>
-    <link rel="shortcut icon" type="image/jpg" href="./stylesheets/img//ship/ship.png"/>
+    <link rel="shortcut icon" type="image/jpg" href="./stylesheets/img/ship/ship.png"/>
 
     <style>
         canvas{
@@ -24,12 +24,38 @@
         }
         
     </style>
+    <script>
+        const menu = document.getElementById('menu');
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("about").style.marginLeft = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("about").style.marginLeft= "0";
+        }
     
-    <script>const menu = document.getElementById('menu');</script>
+    </script>
+    
 </head>
 <!-- <body class='body_container' onload="initialize()"> -->
 <body class='body_container'>
-    <header class='header' style="font-family:'SEGA LOGO FONT';font-weight:normal;font-size:45px">Galaxy Defender</header>
+    <div>
+        <div id="mySidenav" class="sidenav">
+            <a href="" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="https://www.linkedin.com/in/william-leung-60589a73/">Linkedin</a>
+            <a href="https://github.com/1071919wl">Github</a>
+            <a href="mailto:w.leung.93@gmail.com">Email</a>
+        </div>
+        <div id="about">
+            <span style="font-size:20px; color:white; cursor:pointer" onclick="openNav()">&#9776; about</span>
+        </div>
+    </div>
+
+    <header class='header' style="font-family:'SEGA LOGO FONT';font-weight:normal;font-size:45px">
+        <a href="https://1071919wl.github.io/GalaxyDefender/">Galaxy Defender</a>
+    </header>
 
     <div id='menu'>
         <img src="stylesheets/img/ship/PlayerRed_Frame_01_Original.png" alt="menu_ship" width="190" height="auto">
@@ -48,11 +74,17 @@
         <canvas id='ship' width="800" height="650"></canvas> 
         <!-- size of the entire canvas -->
         <!-- <div id='game'></div> -->
-
-  
+        
     </div>
+    <div class='audio_control'>
+        <button type="button" onclick="audio_control()">Music
+            <img src="stylesheets/audio/control/icons8-toggle-on-48.png" width="25" height="auto" id='vol_rocker'>
+        </button>
+    </div>
+    
 
     <script type="application/javascript" src="src/game.js"></script>
+
     <footer id='test'>
     </footer>
 </body>

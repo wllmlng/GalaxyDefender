@@ -25,11 +25,15 @@
     color: #0ccac4;
     /* background-color: black; */
     /* margin-bottom: 10px; */
-    margin-top: 50px;
+    margin-top: -10px;
     text-shadow: 2px 2px blue;
 
     
 } 
+
+.header a {
+    color: #0ccac4;
+}
 
 @font-face {
     font-family: 'SEGA LOGO FONT';
@@ -71,15 +75,6 @@
 }
 
 
-#startBtn {
-    /* display: none; */
-    /* background-color: red; */
-    /* padding: 2px; */
-    /* margin-top: 30px; */
-    /* position: absolute; */
-    /* top: 400px; */
-}
-
 #menu{
     display: block;
     justify-content: center;
@@ -97,7 +92,7 @@
 
 .instructions button{
     margin-bottom: 50px;
-    font-size: 20px;
+    font-size: 25px;
     font-family: 'spaceFont',
     Arial,
     sans-serif;
@@ -149,4 +144,83 @@
     align-content: flex-end;
     padding-bottom: 800px;
     bottom: 100%;
+}
+
+
+
+/* audio */
+.audio_control{
+    display:flex;
+    justify-content: center;
+    margin-left: 740px;
+    background-color: none;
+}
+.audio_control button{
+    /* border: 0; */
+    background-color: transparent;
+    color: white;
+    display: flex;
+    align-items: center;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.audio_control img{
+    margin-left: 5px;
+}
+
+#vol_rocker{
+    background: none;
+}
+
+/* navbar */
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: lightgrey;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+#about {
+    transition: margin-left .5s;
+    padding: 16px;
+
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+
+    .sidenav a {
+        font-size: 18px;
+    }
 }
