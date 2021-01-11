@@ -425,7 +425,7 @@ function Blaster(good_evil){
     this.create = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
-        team === "blaster" ? this.speed = 10 : this.speed = 4
+        team === "blaster" ? this.speed = 8 : this.speed = 4
         this.fired = true;
     }
     
@@ -433,8 +433,18 @@ function Blaster(good_evil){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
         team === 'blaster' ? this.y -= this.speed : this.y += this.speed; //determines if bullets flies up or down
         
-        //!TEST
-        this.isColliding ? true : null
+        //!TEST one enemy die, their shadow is still presence
+        // if (this.isColliding === false){
+        //     if (team === 'blaster' && this.y <= 0 ) {
+        //         this.resetBulletObj()
+        //     } else if( team === 'zapper' && this.y >= this.canvasHeight ){
+        //         this.resetBulletObj()
+        //     }else {
+        //         team === 'zapper' ? 
+        //         this.context.drawImage(ZAPPER, this.x, this.y) : 
+        //         this.context.drawImage(BLASTER, this.x, this.y) 
+        //     }
+        // }
         //!TEST
 
         if (team === 'blaster' && this.y <= 0 ) {
@@ -572,7 +582,7 @@ function Ship(){
         }
     }
 
-    let fireCoolDown = 25; 
+    let fireCoolDown = 28; 
     let coolDownCounter = 0; //shoot once every 25 frame
 
     this.draw = function(){
@@ -613,7 +623,7 @@ function Ship(){
             //!TEST
 
         }    
-		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown ) {
+		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown && !this.isColliding) {
             this.fire();
             BLASTERSOUND.load();
             BLASTERSOUND.play();
@@ -651,7 +661,7 @@ function Enemy(monster){
         this.x = x;  //enemy ship start pos (init 650)
         this.y = y;  //enemy ship start pos (init -10)
         this.speed = 5; 
-		this.speedX = 3; // speed they descend hori/diag
+		this.speedX = 6; // speed they descend hori/diag
 		this.speedY = 1; // speed they descend vert/diag
         this.fired = true;
         this.leftBorder = this.x - 750; // how far left they can go
@@ -732,7 +742,7 @@ function Enemy(monster){
 	// 	this.speedX = 0;
 	// 	this.speedY = 0;
     // 	this.fired = false;
-    // this.isColliding = false;
+    //     this.isColliding = false;
     // }
 }
 Enemy.prototype = new Drawable();
@@ -1047,8 +1057,17 @@ function detectCollision() {
 				 objects[x].y < obj[y].y + obj[y].itemHeight &&
                  objects[x].y + objects[x].itemHeight > obj[y].y)) {
 
-				objects[x].isColliding = true;
-				obj[y].isColliding = true;
+                objects[x].isColliding = true;
+                obj[y].isColliding = true;
+                
+                // if(objects[x].type === 'bullet'){
+                //     objects[x].collidableWith = null;
+                //     objects[x].context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight)
+                // }
+                // if(objects[y].type === 'bullet'){
+                //     objects[y].collidableWith = null;
+                //     objects[x].context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight)
+                // }
             }
         }
         // console.log(objects[x].isColliding)
