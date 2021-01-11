@@ -31,6 +31,10 @@
     
 } 
 
+.header a {
+    color: #0ccac4;
+}
+
 @font-face {
     font-family: 'SEGA LOGO FONT';
     font-style: normal;

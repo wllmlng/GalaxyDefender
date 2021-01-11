@@ -312,7 +312,7 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
                 let bullet = new Blaster('blaster');
                 bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
                 //!TEST
-                bullet.colliableWith = "enemy";
+                bullet.collidableWith = "enemy";
                 bullet.type = 'bullet';
                 //!TEST
                 pool.push(bullet);
@@ -324,8 +324,8 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
                 let enemy = new Enemy('enemyShip');
                 enemy.initialize(0, 0, ENEMY1.width, ENEMY1.height);
                 //!TEST
-                // bullet.colliableWith = "bullet";
-                // bullet.type = "enemy"
+                enemy.collidableWith = "bullet";
+                enemy.type = "enemy"
                 //!TEST
                 pool.push(enemy);
                 // console.log('297 - fine',enemy)
@@ -338,7 +338,7 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
                 let zap = new Blaster('zapper');
                 zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
                 //!TEST
-                zap.colliableWith = "ship";
+                zap.collidableWith = "ship";
                 zap.type = "enemyBullet"
                 //!TEST
                 pool.push(zap);
@@ -372,7 +372,6 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
     //checking to see if the item has been fired
     //if false, it will move it to the front for grabs
 	this.shoot = function(x, y) {
-        // console.log('gppd', pool)
         let lastShot = pool[pool.length - 1] //pool[-1]
 		if(lastShot.fired === false) {
             let item = pool.pop();
@@ -440,12 +439,9 @@ function Blaster(good_evil){
 
         if (team === 'blaster' && this.y <= 0 ) {
             this.resetBulletObj()
-            // console.log('blast reseting')
         } else if( team === 'zapper' && this.y >= this.canvasHeight ){
             this.resetBulletObj()
-            // console.log('zap reseting')
-        }
-        else {
+        }else {
             team === 'zapper' ? 
             this.context.drawImage(ZAPPER, this.x, this.y) : 
             this.context.drawImage(BLASTER, this.x, this.y) 
@@ -462,9 +458,7 @@ function Blaster(good_evil){
 		this.speedX = 0;
 		this.speedY = 0;
         this.fired = false;
-        //!TEST
         this.isColliding = false;
-        //!TEST
     }
 
 }
@@ -495,7 +489,6 @@ const KEY_PRESS = {
 window.addEventListener('keydown', onKeyPress);
 function onKeyPress(e){
     let key = e.code;
-    // console.log(e)
     if(key === MOVE_DIR.left){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
@@ -562,8 +555,10 @@ function Ship(){
 
     //!TEST
     // this.collidableWith = 'enemyShip';
+
     this.collidableWith = 'enemyBullet';
     this.type = "ship"
+
     //!TEST
     
 
@@ -581,7 +576,11 @@ function Ship(){
     let coolDownCounter = 0; //shoot once every 25 frame
 
     this.draw = function(){
-        this.context.drawImage(SHIP, this.x, this.y);
+        if(this.isColliding === false){
+            this.context.drawImage(SHIP, this.x, this.y);
+        }else{
+            this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+        }
     }
 
     this.move = function(){
@@ -600,7 +599,7 @@ function Ship(){
             }
             if (KEY_PRESS.up) {
                 this.y <= 0 ? this.y = 0 : this.y -= this.speed
-                this.accelAnim();
+                this.isColliding === false ? this.accelAnim() : null
             }
             if (KEY_PRESS.down) {
                 this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
@@ -608,13 +607,13 @@ function Ship(){
 
             //!TEST
             if(this.isColliding === false){
+                // console.log('611', this.isColliding)
                 this.draw();
             }
             //!TEST
-            // this.draw();
 
         }    
-		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
+		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown ) {
             this.fire();
             BLASTERSOUND.load();
             BLASTERSOUND.play();
@@ -624,7 +623,9 @@ function Ship(){
 
 	this.fire = function() {
         // this.ammoSupply.shoot(this.x+23, this.y);
+
         this.ammoSupply.shootTwo(this.x+8, this.y, this.x+35 , this.y);
+
         // this.ammoSupply.shootThree(this.x, this.y, this.x+44, this.y, this.x+23, this.y);
 	};
 }
@@ -642,7 +643,7 @@ function Enemy(monster){
     this.fired = false;
 
     //!TEST
-    this.colliableWith = 'bullet';
+    this.collidableWith = 'bullet';
     this.type='enemy';
     //!TEST
 
@@ -720,7 +721,6 @@ function Enemy(monster){
     
 	this.fire = function() {
         game.enemyAmmo.shoot(this.x+30, this.y+40);
-        // game.enemyAmmo.shoot(this.x, this.y);
     }
     
     //resets the blaster object so we can reuse it in our pool
@@ -736,11 +736,6 @@ function Enemy(monster){
     // }
 }
 Enemy.prototype = new Drawable();
-
-
-                                    //! COLLISION DETECTION
-
-
                
 
 
@@ -775,7 +770,6 @@ function Game(){
             let shipStartPosY = (this.shipCanvas.height / 2) + 150;
 
             this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height+20);
-
         this.mainCanvas = document.getElementById('main');
         this.mainContext = this.mainCanvas.getContext('2d');    
 
@@ -810,7 +804,7 @@ function Game(){
                 x:0, 
                 y:0, 
                 width: this.mainCanvas.width,
-                height:this.mainCanvas.height
+                height: this.mainCanvas.height
             });
 
 
@@ -849,7 +843,6 @@ function Game(){
 
 
 function animate(){
-    
     //!TEST
     	// Insert objects into quadtree
 	game.quadTree.clear();
@@ -873,7 +866,12 @@ function animate(){
     game.enemyAmmo.animateFiring();
 }
 
+
+
+
+
 function QuadTree(boundBox, lvl) {
+
 	var maxObjects = 10;
 	this.bounds = boundBox || {
 		x: 0,
@@ -1004,7 +1002,7 @@ function QuadTree(boundBox, lvl) {
 	 * Splits the node into 4 subnodes
 	 */
 	this.split = function() {
-		// Bitwise or [html5rocks]
+        // Bitwise or [html5rocks]
 		var subWidth = (this.bounds.width / 2) | 0;
 		var subHeight = (this.bounds.height / 2) | 0;
 		this.nodes[0] = new QuadTree({
@@ -1035,23 +1033,25 @@ function QuadTree(boundBox, lvl) {
 }
 
 function detectCollision() {
-	var objects = [];
-	game.quadTree.getAllObjects(objects);
+    var objects = [];
+    game.quadTree.getAllObjects(objects);
 	for (var x = 0, len = objects.length; x < len; x++) {
 		game.quadTree.findObjects(obj = [], objects[x]);
 
 		for (y = 0, length = obj.length; y < length; y++) {
 
-			// DETECT COLLISION ALGORITHM
-			if (objects[x].collidableWith === obj[y].type &&
-				(objects[x].x < obj[y].x + obj[y].width &&
-			     objects[x].x + objects[x].width > obj[y].x &&
-				 objects[x].y < obj[y].y + obj[y].height &&
-				 objects[x].y + objects[x].height > obj[y].y)) {
+            // DETECT COLLISION ALGORITHM
+            if (objects[x].collidableWith === obj[y].type && //!confirming one obj can collide with the other obj
+				(objects[x].x < obj[y].x + obj[y].itemWidth &&
+			     objects[x].x + objects[x].itemWidth > obj[y].x &&
+				 objects[x].y < obj[y].y + obj[y].itemHeight &&
+                 objects[x].y + objects[x].itemHeight > obj[y].y)) {
+
 				objects[x].isColliding = true;
 				obj[y].isColliding = true;
-			}
-		}
+            }
+        }
+        // console.log(objects[x].isColliding)
 	}
 };
 
