@@ -433,6 +433,7 @@ function Blaster(good_evil){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
         team === 'blaster' ? this.y -= this.speed : this.y += this.speed; //determines if bullets flies up or down
         
+        
         //!TEST one enemy die, their shadow is still presence
         // if (this.isColliding === false){
         //     if (team === 'blaster' && this.y <= 0 ) {
