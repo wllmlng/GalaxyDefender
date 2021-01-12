@@ -207,6 +207,7 @@
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
+    cursor: pointer;
 }
 
 #about {
@@ -223,4 +224,8 @@
     .sidenav a {
         font-size: 18px;
     }
+}
+
+#startBtn{
+    cursor: pointer;
 }
