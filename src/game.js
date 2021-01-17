@@ -723,6 +723,7 @@ function Enemy(monster){
         else{
             ENEMYDESTROYED.load();
             ENEMYDESTROYED.play();
+            // this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
             return true; //need to let "animateFiring" know its colliding
         }
         //!TEST
