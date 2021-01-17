@@ -210,6 +210,16 @@
 // }
 
 //!~~~~~~~~~~~~~~~~~~~CANVAS ATTEMPT~~~~~~~~~~~~~~~~~~~~~~~~~
+// const {QuadTree, Box, Point, Circle} = require('js-quadtree');
+// import {QuadTree, Box, Point, Circle} from '../node_modules/js-quadtree';
+// Quadtree = require("quadtree-lib")
+
+// const quadtree = new QuadTree(new Box(0, 0, 1000, 1000));
+ 
+// quadtree.insert(new Point(100, 200, {custom: 'data'}));
+ 
+// const results = quadtree.query(new Circle(150, 150, 100));
+
 
 const BACKGROUND = new Image();
     BACKGROUND.src = './stylesheets/img/bg_vert.png';
@@ -906,17 +916,19 @@ function detectCollision() {
 
 function QuadTree(boundBox, lvl) {
 
-	var maxObjects = 10;
+	let maxObjects = 10;
 	this.bounds = boundBox || {
 		x: 0,
 		y: 0,
 		width: 0,
 		height: 0
 	};
-	var objects = [];
+	let objects = [];
 	this.nodes = [];
-	var level = lvl || 0;
-	var maxLevels = 5;
+	let level = lvl || 0;
+    let maxLevels = 5;
+    // console.log('obj - 930', objects);
+    // returns the blaster object (enemys_bullet)
 	/*
 	 * Clears the quadTree and all nodes of objects
 	 */
@@ -1066,6 +1078,148 @@ function QuadTree(boundBox, lvl) {
 	};
 }
 
+
+// https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
+// The five methods of a quadtree: clear, split, getIndex, insert, and retrieve.
+// function QuadTree(level, bound){
+//     let maxObjects = 10;
+//     let maxLevels = 5;
+
+//     let level = level || 0;
+//     let objects = [];
+//     this.bound = bound || {
+//         x: 0,
+// 		y: 0,
+// 		width: 0,
+// 		height: 0
+//     };
+//     this.nodes = [];
+
+
+//     //Clears the objects from all nodes in the quadtree recursively
+//     this.clear = function(){
+//         objects = [];
+
+//         for(let i = 0; i < this.nodes.length; i ++){
+//             if (this.nodes[i] != null){
+//                 this.nodes[i].clear();
+//                 this.nodes[i].null;
+//             }
+//         }
+//     }
+
+
+
+
+
+
+//     //splits the node infor 4 subnodes by dividing the node into 4 equal parts
+//     //and initializing the 4 subnodes with new bounds
+//     this.split = function(){
+//         let subWidth = this.bound.width / 2;
+//         let subHeight = this.bound.height / 2;
+
+//         this.nodes[0] = new QuadTree(level + 1, {
+//             x: this.bound.x + subWidth,
+//             y: this.bound.y,
+//             width: subWidth,
+//             height: subHeight
+//         })
+//         this.nodes[1] = new QuadTree(level + 1, {
+//             x: this.bound.x,
+//             y: this.bound.y,
+//             width: subWidth,
+//             height: subHeight
+//         })
+//         this.nodes[2] = new QuadTree(level + 1, {
+//             x: this.bound.x,
+//             y: this.bound.y + subHeight,
+//             width: subWidth,
+//             height: subHeight
+//         })
+//         this.nodes[3] = new QuadTree(level + 1, {
+//             x: this.bound.x + subWidth,
+//             y: this.bound.y + subHeight,
+//             width: subWidth,
+//             height: subHeight
+//         })
+//     }
+
+
+//     // 1 | 0
+//     // -----
+//     // 2 | 3
+//     //determines where an object belongs in the quadtree via which node it fits into
+//     this.getIndex = function(obj){
+//         let index = -1;
+//         let verticalMidpoint = this.bound.x + this.bound.width / 2;
+//         let horizontalMidpoint = this.bound.y + this.bound.height / 2;
+
+//         // Object can completely fit within the top quadrants
+//         let topQuadrant = (obj.y < horizontalMidpoint) && (obj.y + obj.height < horizontalMidpoint);
+//         // Object can completely fit within the bottom quadrants
+//         let bottomQuadrant = obj.y > horizontalMidpoint;
+
+//         //Object can completely fit within the left quadrants
+//         if (obj.x < verticalMidpoint && obj.x + obj.width < verticalMidpoint){
+//             if ( topQuadrant ){
+//                 index = 1;
+//             } else if ( bottomQuadrant ) {
+//                 index = 2;
+//             }
+//         } else if ( obj.x > vericalMidpoint ) {
+//             if ( topQuadrant ){
+//                 index = 0;
+//             } else if ( bottomQuadrant) {
+//                 index = 3;
+//             }
+//         }
+
+//         return index;
+//     }
+    
+
+//     //1. determines whether the node has any child nodes and tries to add obj there.
+//     //2. if no child nodes or obj doesnt fit in a child node, it adds the obj to parent
+//     //3. once added, it determines whether the node needs to split by checking against 
+//     // the max allowed objects.
+//     //4. splitting will cause node to insert any obj that can fit in a child node to 
+//     //be added to the child node. Otherwise, it will remain in parent
+//     this.insert = function (obj) {
+//         if ( nodes[0] != null ){
+//             let index = this.getIndex(obj);
+
+//             if (index != -1){
+//                 nodes[index].insert(obj);
+//             }
+
+//             return;
+//         }
+//     }
+
+//     objects.push(obj);
+
+//     if (objects.length > maxObjects && level < maxLevels) {
+//         if (this.nodes[0] == null) {
+//             this.split();
+//         }
+//         let i = 0;
+//         while (i < objects.length) {
+//             let index = this.getIndex(objects[i]);
+//             if (index != -1) {
+//                 this.nodes[index].insert((objects.splice(i,1))[0]);
+//             }
+//             else {
+//                 i++;
+//             }
+//         }
+//     }
+
+
+
+
+// }
+
 function audio_control(){
     const musicControl = document.getElementById('vol_rocker');
     if ( MUSIC.muted === true ){
@@ -1076,6 +1230,7 @@ function audio_control(){
         musicControl.src = "stylesheets/audio/control/icons8-toggle-off-48.png"
     }
 }
+
 
 // Initialize Game
 let game = new Game();
