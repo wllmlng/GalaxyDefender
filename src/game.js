@@ -235,10 +235,21 @@ const SKULLBOSS = new Image();
     SKULLBOSS.src = './stylesheets/img/boss/skullBoss.png'    
     
 
+const SHIPEXPLODE = new Image();
+SHIPEXPLODE.src = './stylesheets/img/ship/Explosion02_Frame_08_png_processed.png';
+
+
+
+    
+
+
 // AUDIO
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
-// const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
 BLASTERSOUND.volume = 0.5
+const ENEMYDESTROYED = new Audio("./stylesheets/audio/sunstrike_new.mp3");
+ENEMYDESTROYED.volume = 0.8
+const SHIPDESTROYED = new Audio("./stylesheets/audio/Necrophos_Ghost_Shroud.mp3.mp3");
+SHIPDESTROYED.volume = 0.8
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.3;
 MUSIC.loop = true;
@@ -588,6 +599,9 @@ function Ship(){
             this.context.drawImage(SHIP, this.x, this.y);
         }
         else{
+            // SHIPDESTROYED.load();
+            // this.context.drawImage(SHIPEXPLODE, this.x, this.y);
+            SHIPDESTROYED.play();
             this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
         }
     }
@@ -702,6 +716,8 @@ function Enemy(monster){
             }
         }
         else{
+            ENEMYDESTROYED.load();
+            ENEMYDESTROYED.play();
             return true; //need to let "animateFiring" know its colliding
         }
         //!TEST
