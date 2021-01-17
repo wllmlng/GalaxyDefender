@@ -236,8 +236,9 @@ const SKULLBOSS = new Image();
     
 
 const SHIPEXPLODE = new Image();
-SHIPEXPLODE.src = './stylesheets/img/ship/Explosion02_Frame_08_png_processed.png';
-
+SHIPEXPLODE.src = './stylesheets/img/ship/Explosion02_Frame_09_png_processed.png';
+const SHIPEXPLODE2 = new Image();
+SHIPEXPLODE2.src = './stylesheets/img/ship/Explosion01_Frame_09_png_processed.png';
 
 
     
@@ -250,6 +251,7 @@ const ENEMYDESTROYED = new Audio("./stylesheets/audio/sunstrike_new.mp3");
 ENEMYDESTROYED.volume = 0.8
 const SHIPDESTROYED = new Audio("./stylesheets/audio/Necrophos_Ghost_Shroud.mp3.mp3");
 SHIPDESTROYED.volume = 0.8
+SHIPDESTROYED.loop = false;
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.3;
 MUSIC.loop = true;
@@ -566,6 +568,8 @@ function onKeyUp(e){
 function Ship(){
     this.thrust = false;
 
+    this.shipLost = false;
+
     this.speed = 4; //speed of ship movement
 
     this.ammoSupply = new AmmoSupply(); 
@@ -599,43 +603,44 @@ function Ship(){
             this.context.drawImage(SHIP, this.x, this.y);
         }
         else{
-            // SHIPDESTROYED.load();
-            // this.context.drawImage(SHIPEXPLODE, this.x, this.y);
-            SHIPDESTROYED.play();
+            this.shipLost === false ? SHIPDESTROYED.play() : null;
+            this.shipLost = true;
             this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+            this.context.drawImage(SHIPEXPLODE, this.x, this.y);
+            // this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
+            
         }
     }
 
     this.move = function(){
         coolDownCounter += 1;
         // console.log(coolDownCounter);
-        if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
+        if (this.isColliding === false){
+            if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
 
-            this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
-            //removes ship at previous location if it moved
+                this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+                //removes ship at previous location if it moved
 
-            if (KEY_PRESS.left) {                
-                this.x <= 0 ? this.x = 0 : this.x -= this.speed
-            }
-            if (KEY_PRESS.right) {
-                this.x >= this.canvasWidth-SHIP.width ? this.x = this.canvasWidth - SHIP.width : this.x += this.speed
-            }
-            if (KEY_PRESS.up) {
-                this.y <= 0 ? this.y = 0 : this.y -= this.speed
-                this.isColliding === false ? this.accelAnim() : null
-            }
-            if (KEY_PRESS.down) {
-                this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
-            }
+                if (KEY_PRESS.left) {                
+                    this.x <= 0 ? this.x = 0 : this.x -= this.speed
+                }
+                if (KEY_PRESS.right) {
+                    this.x >= this.canvasWidth-SHIP.width ? this.x = this.canvasWidth - SHIP.width : this.x += this.speed
+                }
+                if (KEY_PRESS.up) {
+                    this.y <= 0 ? this.y = 0 : this.y -= this.speed
+                    this.isColliding === false ? this.accelAnim() : null
+                }
+                if (KEY_PRESS.down) {
+                    this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
+                }
 
-            //!TEST
-            if(this.isColliding === false){
-                // console.log('611', this.isColliding)
-                this.draw();
-            }
-            //!TEST
+                if(this.isColliding === false){
+                    this.draw();
+                }
 
-        }    
+            }    
+        }
 		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown && !this.isColliding) {
             this.fire();
             BLASTERSOUND.load();
