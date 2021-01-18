@@ -239,6 +239,8 @@ const SHIPEXPLODE = new Image();
 SHIPEXPLODE.src = './stylesheets/img/ship/Explosion02_Frame_09_png_processed.png';
 const SHIPEXPLODE2 = new Image();
 SHIPEXPLODE2.src = './stylesheets/img/ship/Explosion01_Frame_09_png_processed.png';
+const SHIPEXPLODE3 = new Image();
+SHIPEXPLODE3.src = './stylesheets/img/ship/Explosion01_Frame_05_png_processed.png';
 
 
     
@@ -248,9 +250,9 @@ SHIPEXPLODE2.src = './stylesheets/img/ship/Explosion01_Frame_09_png_processed.pn
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 BLASTERSOUND.volume = 0.5
 const ENEMYDESTROYED = new Audio("./stylesheets/audio/sunstrike_new.mp3");
-ENEMYDESTROYED.volume = 0.8
+ENEMYDESTROYED.volume = 0.7
 const SHIPDESTROYED = new Audio("./stylesheets/audio/Necrophos_Ghost_Shroud.mp3.mp3");
-SHIPDESTROYED.volume = 0.8
+SHIPDESTROYED.volume = 0.7
 SHIPDESTROYED.loop = false;
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.3;
@@ -606,8 +608,8 @@ function Ship(){
             this.shipLost === false ? SHIPDESTROYED.play() : null;
             this.shipLost = true;
             this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
-            this.context.drawImage(SHIPEXPLODE, this.x, this.y);
-            // this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
+            // this.context.drawImage(SHIPEXPLODE, this.x, this.y);
+            this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
             
         }
     }
