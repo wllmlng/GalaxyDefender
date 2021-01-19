@@ -249,12 +249,12 @@ SHIPEXPLODE3.src = './stylesheets/img/ship/Explosion01_Frame_05_png_processed.pn
 // AUDIO
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 // const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
+BLASTERSOUND.volume = 0.3
 BLASTERSOUND.volume = 0.4
-BLASTERSOUND.volume = 0.5
 const ENEMYDESTROYED = new Audio("./stylesheets/audio/sunstrike_new.mp3");
-ENEMYDESTROYED.volume = 0.7
+ENEMYDESTROYED.volume = 0.5
 const SHIPDESTROYED = new Audio("./stylesheets/audio/Necrophos_Ghost_Shroud.mp3.mp3");
-SHIPDESTROYED.volume = 0.7
+SHIPDESTROYED.volume = 0.5
 SHIPDESTROYED.loop = false;
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.3;
