@@ -229,3 +229,7 @@
 #startBtn{
     cursor: pointer;
 }
+
+#gameOver{
+    display:none;
+}

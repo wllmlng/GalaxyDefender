@@ -35,6 +35,8 @@
             document.getElementById("mySidenav").style.width = "0";
             document.getElementById("about").style.marginLeft= "0";
         }
+
+        const gameOver = document.getElementById('gameOver');
     
     </script>
     
@@ -64,6 +66,12 @@
             <div>HOW TO PLAY:</div>
             <div>CLICK SPACE TO SHOOT</div>
             <div>USE ARROW KEYS TO MOVE</div>
+        </div>
+    </div>
+    <div id='gameOver'>
+        <div class='gameOption'>
+            <div>GAME OVER</div>
+            <button type="button" id="restartBtn" onclick="initialize()">Restart</button>
         </div>
     </div>
 

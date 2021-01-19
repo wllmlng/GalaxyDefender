@@ -445,7 +445,7 @@ function Blaster(good_evil){
     this.create = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
-        team === "blaster" ? this.speed = 10 : this.speed = 6
+        team === "blaster" ? this.speed = 10 : this.speed = 5
         this.fired = true;
     }
     
@@ -610,6 +610,8 @@ function Ship(){
             this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
             // this.context.drawImage(SHIPEXPLODE, this.x, this.y);
             this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
+            //!TEST
+            game.gameOver();
             
         }
     }
@@ -652,9 +654,9 @@ function Ship(){
     }
 
 	this.fire = function() {
-        this.ammoSupply.shoot(this.x+23, this.y);
+        // this.ammoSupply.shoot(this.x+23, this.y);
 
-        // this.ammoSupply.shootTwo(this.x+8, this.y, this.x+35 , this.y);
+        this.ammoSupply.shootTwo(this.x+8, this.y, this.x+35 , this.y);
 
         // this.ammoSupply.shootThree(this.x, this.y, this.x+44, this.y, this.x+23, this.y);
 	};
@@ -708,6 +710,7 @@ function Enemy(monster){
         if( this.y === this.bottomBorder){
             this.speedY = -1;
         }
+
 
         //!TEST
         if(this.isColliding === false){
@@ -837,6 +840,13 @@ function Game(){
 
 
         //!TEST
+
+            this.gameOver = function(){
+                MUSIC.pause();
+                this.gameOver.style.display = "block";
+
+            }
+
             MUSIC.load();
             MUSIC.play();
 
@@ -853,7 +863,7 @@ function Game(){
 				if (i % 6 === 0) {
 					x -= 400;
 					y += spacer
-				}
+                }
             }
     }
 
@@ -892,6 +902,9 @@ function animate(){
     game.enemyShip.animateFiring();
     game.spiderBoss.animateFiring();
     game.enemyAmmo.animateFiring();
+    if (game.enemyShip.getPool().length === 0) {
+        game.formation1();
+    }
 }
 
 
@@ -1072,7 +1085,7 @@ function detectCollision() {
 	for (let x = 0; x < objects.length; x++) {
 		game.quadTree.retrieve(obj = [], objects[x]);
 
-		for (y = 0, length = obj.length; y < length; y++) {
+		for (y = 0; y < obj.length; y++) {
 
             // DETECT COLLISION ALGORITHM
             if (objects[x].collidableWith === obj[y].type && //!confirming one obj can collide with the other obj
@@ -1116,5 +1129,6 @@ function initialize(){
     game.initialize();
     game.start();
     this.menu.style.display = "none";
+    console.log('1132', this.gameOver)
 }
 
