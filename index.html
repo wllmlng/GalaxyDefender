@@ -37,6 +37,8 @@
         }
 
         const gameOver = document.getElementById('gameOver');
+        const restartBtn = document.getElementById('restartBtn');
+        
     
     </script>
     
@@ -68,12 +70,6 @@
             <div>USE ARROW KEYS TO MOVE</div>
         </div>
     </div>
-    <div id='gameOver'>
-        <div class='gameOption'>
-            <div>GAME OVER</div>
-            <button type="button" id="restartBtn" onclick="initialize()">Restart</button>
-        </div>
-    </div>
 
     <div class='game_container'>
         <canvas id='background' width="360" height="600"></canvas>
@@ -84,6 +80,14 @@
         <!-- <div id='game'></div> -->
         
     </div>
+
+    <div id='gameOver'>
+        <div class='gameOption'>
+            <div>GAME OVER</div>
+            <button type="button" id="restartBtn" onclick="game.restart()">Restart</button>
+        </div>
+    </div>
+
     <div class='audio_control'>
         <button type="button" onclick="audio_control()">Music
             <img src="stylesheets/audio/control/icons8-toggle-on-48.png" width="25" height="auto" id='vol_rocker'>

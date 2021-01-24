@@ -250,7 +250,7 @@ SHIPEXPLODE3.src = './stylesheets/img/ship/Explosion01_Frame_05_png_processed.pn
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 // const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
 BLASTERSOUND.volume = 0.3
-BLASTERSOUND.volume = 0.4
+BLASTERSOUND.volume = 0.5
 const ENEMYDESTROYED = new Audio("./stylesheets/audio/sunstrike_new.mp3");
 ENEMYDESTROYED.volume = 0.5
 const SHIPDESTROYED = new Audio("./stylesheets/audio/Necrophos_Ghost_Shroud.mp3.mp3");
@@ -802,8 +802,8 @@ function Game(){
             let shipStartPosY = (this.shipCanvas.height / 2) + 150;
 
             this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height+20);
-        this.mainCanvas = document.getElementById('main');
-        this.mainContext = this.mainCanvas.getContext('2d');    
+            this.mainCanvas = document.getElementById('main');
+            this.mainContext = this.mainCanvas.getContext('2d');    
 
             Blaster.prototype.context = this.mainContext;
             Blaster.prototype.canvasWidth = this.mainCanvas.width;  //width="800"
@@ -845,10 +845,23 @@ function Game(){
 
             this.gameOver = function(){
                 MUSIC.pause();
-                this.gameOver.style.display = "block";
+                // console.log('842', GAMEOVER)
+
+                GAMEOVER.style.display = 'block'
 
             }
 
+            this.restart = function(){
+                console.log('restart')
+                GAMEOVER.style.display = 'none';
+
+                this.bgContext.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
+                this.shipContext.clearRect(0, 0, this.shipCanvas.width, this.shipCanvas.height);
+                this.mainContext.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+
+                game.initialize();
+
+            }
             MUSIC.load();
             MUSIC.play();
 
@@ -1126,11 +1139,14 @@ function audio_control(){
 
 // Initialize Game
 let game = new Game();
+let GAMEOVER = null;
 
 function initialize(){
     game.initialize();
     game.start();
     this.menu.style.display = "none";
-    console.log('1132', this.gameOver)
+    // this.gameOver.style.display = "none";
+    // console.log('1132', this.gameOver.style.display = 'block')
+    GAMEOVER = this.gameOver
 }
 
