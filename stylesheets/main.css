@@ -269,11 +269,17 @@
 
 .score{
     /* display: flex; */
-    justify-content: center;
+    /* justify-content: center;
     text-align: center;
     position: absolute;
     width: 100%;
-    height: 650px;
+    height: 650px; */
+    display:flex;
+    justify-content: center;
+    margin-left: 650px;
+    margin-top: 10px;
+    background-color: none;
+
     /* top: 5px; */
     /* left: 930px; */
     color: #ffc05a;
