@@ -70,6 +70,9 @@
             <div>USE ARROW KEYS TO MOVE</div>
         </div>
     </div>
+    <div class="score">SCORE: 
+        <span id="score"></span>
+    </div>
 
     <div class='game_container'>
         <canvas id='background' width="360" height="600"></canvas>
@@ -83,7 +86,7 @@
 
     <div id='gameOver'>
         <div class='gameOption'>
-            <div>GAME OVER</div>
+            <div className='gameOver_text'>GAME OVER</div>
             <button type="button" id="restartBtn" onclick="game.restart()">Restart</button>
         </div>
     </div>

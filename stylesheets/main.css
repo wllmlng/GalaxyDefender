@@ -179,7 +179,7 @@
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 6;
     top: 0;
     left: 0;
     background-color: #111;
@@ -195,6 +195,7 @@
     color: lightgrey;
     display: block;
     transition: 0.3s;
+    
 }
 
 .sidenav a:hover {
@@ -232,15 +233,52 @@
 
 #gameOver{
     display:none;
-    background-color: yellow;
+    background-color: black;
     justify-content: center;
     text-align: center;
     position: absolute;
-    width: 100%;
-    margin-top: -90px;
+    width: 102%;
+    margin-top: -50px;
     z-index: 5;
     font-family: 'spaceFont',
     Arial,
     sans-serif;
     font-size: 25px;
+    color: red;
+    opacity: 0.8;
+    padding-top: 30px;
+    margin-left: -10px;
+
+}
+
+
+
+#restartBtn{
+    margin-bottom: 50px;
+    font-size: 25px;
+    font-family: 'spaceFont',
+    Arial,
+    sans-serif;
+    color: white;
+    border: none;
+    background: none;
+    margin-top: 50px;
+    cursor: pointer;
+
+}
+
+.score{
+    /* display: flex; */
+    justify-content: center;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 650px;
+    /* top: 5px; */
+    /* left: 930px; */
+    color: #ffc05a;
+    font-family: 'spaceFont',
+    Arial,
+    sans-serif;
+    /* cursor: default; */
 }

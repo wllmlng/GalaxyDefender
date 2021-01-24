@@ -730,6 +730,7 @@ function Enemy(monster){
         else{
             ENEMYDESTROYED.load();
             ENEMYDESTROYED.play();
+            game.playerScore += 10;
             // this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
             return true; //need to let "animateFiring" know its colliding
         }
@@ -842,6 +843,8 @@ function Game(){
 
 
         //!TEST
+        	this.playerScore = 0;
+
 
             this.gameOver = function(){
                 MUSIC.pause();
@@ -858,6 +861,9 @@ function Game(){
                 this.bgContext.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
                 this.shipContext.clearRect(0, 0, this.shipCanvas.width, this.shipCanvas.height);
                 this.mainContext.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+                
+                this.playerScore = 0;
+
 
                 game.initialize();
 
@@ -897,6 +903,7 @@ function Game(){
 
 function animate(){
     //!TEST
+    document.getElementById('score').innerHTML = game.playerScore;
     	// Insert objects into quadtree
 	game.quadTree.clear();
 	game.quadTree.insert(game.ship);
