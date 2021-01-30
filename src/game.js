@@ -235,10 +235,27 @@ const SKULLBOSS = new Image();
     SKULLBOSS.src = './stylesheets/img/boss/skullBoss.png'    
     
 
+const SHIPEXPLODE = new Image();
+SHIPEXPLODE.src = './stylesheets/img/ship/Explosion02_Frame_09_png_processed.png';
+const SHIPEXPLODE2 = new Image();
+SHIPEXPLODE2.src = './stylesheets/img/ship/Explosion01_Frame_09_png_processed.png';
+const SHIPEXPLODE3 = new Image();
+SHIPEXPLODE3.src = './stylesheets/img/ship/Explosion01_Frame_05_png_processed.png';
+
+
+    
+
+
 // AUDIO
 const BLASTERSOUND = new Audio("./stylesheets/audio/newNewFrostArrow.mp3");
 // const BLASTERSOUND = new Audio("./stylesheets/audio/laser1.mp3");
+BLASTERSOUND.volume = 0.3
 BLASTERSOUND.volume = 0.5
+const ENEMYDESTROYED = new Audio("./stylesheets/audio/sunstrike_new.mp3");
+ENEMYDESTROYED.volume = 0.5
+const SHIPDESTROYED = new Audio("./stylesheets/audio/Necrophos_Ghost_Shroud.mp3.mp3");
+SHIPDESTROYED.volume = 0.5
+SHIPDESTROYED.loop = false;
 const MUSIC = new Audio("./stylesheets/audio/slipknot-background-music.mp3");
 MUSIC.volume = 0.3;
 MUSIC.loop = true;
@@ -260,6 +277,16 @@ function Drawable(){
     this.pixelSpeed = 0; // pixels fps 
     this.canvasWidth = 0; //800 //the imgs width+height / canvas size 
     this.canvasHeight = 0; //650
+
+    //!TEST 1/9
+    this.collidable = '';
+    this.isColliding = false;
+    this.type = '';
+
+    this.isCollidableWith = function(object){
+        return (this.collidableWith === object.type);
+    }
+    //!TEST 1/9
 
 }
 
@@ -289,7 +316,7 @@ Background.prototype = new Drawable();
                                         //!BLASTER / ZAPPER
 
 function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
-    let bulletAmt = 50; //! pool size to recycle 
+    let bulletAmt = 50; 
     let bossAmt = 1;
     let pool = [];
     
@@ -301,6 +328,10 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
             for ( let i = 0; i < bulletAmt; i ++){
                 let bullet = new Blaster('blaster');
                 bullet.initialize(0, 0, BLASTER.width, BLASTER.height);
+                //!TEST
+                bullet.collidableWith = "enemy";
+                bullet.type = 'bullet';
+                //!TEST
                 pool.push(bullet);
             }
         }
@@ -309,6 +340,10 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
             for ( let i = 0; i < bulletAmt; i ++){
                 let enemy = new Enemy('enemyShip');
                 enemy.initialize(0, 0, ENEMY1.width, ENEMY1.height);
+                //!TEST
+                enemy.collidableWith = "bullet";
+                enemy.type = "enemy"
+                //!TEST
                 pool.push(enemy);
                 // console.log('297 - fine',enemy)
             }
@@ -319,6 +354,10 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
             for ( let i = 0; i < bulletAmt; i ++){
                 let zap = new Blaster('zapper');
                 zap.initialize(0, 0, ZAPPER.width, ZAPPER.height);
+                //!TEST
+                zap.collidableWith = "ship";
+                zap.type = "enemyBullet"
+                //!TEST
                 pool.push(zap);
                 // console.log('305 - fine',zap)
             }
@@ -334,10 +373,22 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
         }
 
     }
+
+    //!TEST
+    	this.getPool = function() {
+		var obj = [];
+		for (var i = 0; i < bulletAmt; i++) {
+			if (pool[i].fired) {
+				obj.push(pool[i]);
+			}
+		}
+		return obj;
+    }
+    //!TEST
+
     //checking to see if the item has been fired
     //if false, it will move it to the front for grabs
 	this.shoot = function(x, y) {
-        // console.log('gppd', pool)
         let lastShot = pool[pool.length - 1] //pool[-1]
 		if(lastShot.fired === false) {
             let item = pool.pop();
@@ -369,14 +420,19 @@ function AmmoSupply() { //?OBJECT POOL TO RECYCLE BLASTERS
     
     // if object is flipped true, this will animate the blaster and render it
 	this.animateFiring = function() {
+        //!TEST
         for (let i = 0; i < bulletAmt; i++) {
             if (pool[i] === undefined){
                 break;
-            }else
-            if (pool[i].fired === true) {
-                pool[i].draw()
+            }else if (pool[i].fired === true) {
+                if (pool[i].draw() === true){   //obj isColliding
+                    pool[i].resetBulletObj();
+                    pool.push((pool.splice(i,1))[0]);
+                }
             }
         }
+        //!TEST
+
     };
 }
 
@@ -391,7 +447,7 @@ function Blaster(good_evil){
     this.create = function(x, y){  //x and y provided but the ship fire function
         this.x = x; 
         this.y = y; //where the blaster travels when its shot
-        team === "blaster" ? this.speed = 10 : this.speed = 4
+        team === "blaster" ? this.speed = 10 : this.speed = 5
         this.fired = true;
     }
     
@@ -399,31 +455,35 @@ function Blaster(good_evil){
         this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight);  //need clearRect to clear the image after each movement
         team === 'blaster' ? this.y -= this.speed : this.y += this.speed; //determines if bullets flies up or down
         
-        //!TESTING
-        if (team === 'blaster' && this.y <= 0 ) {
-            this.resetBulletObj()
-            // console.log('blast reseting')
+        
+        //!TEST one enemy die, their shadow is still presence
+        
+        if (this.isColliding === true){
+            return true;      //Let "annimateFiring" know to clear obg + recycle
+        }else if (team === 'blaster' && this.y <= 0 ) {
+                this.resetBulletObj()
         } else if( team === 'zapper' && this.y >= this.canvasHeight ){
-            this.resetBulletObj()
-            // console.log('zap reseting')
-        }
-        else {
+                this.resetBulletObj()
+        }else {
             team === 'zapper' ? 
             this.context.drawImage(ZAPPER, this.x, this.y) : 
             this.context.drawImage(BLASTER, this.x, this.y) 
         }
-        //!TESTING
+        //!TEST
+
     }
 
-    //resets the blaster object so we can reuse it in our pool
-    //covers both blaster and zapper
+    //resetBulletObj is called at the end of AmmoSupply(pool)
+    //this is needed to clear the obj after collision so it doesnt just
+    //linger in the back as a shadow
     this.resetBulletObj = function(){
         this.x = 0;
 		this.y = 0;
 		this.speed = 0;
 		this.speedX = 0;
 		this.speedY = 0;
-		this.fired = false;
+        this.fired = false;
+        this.isColliding = false;
     }
 
 }
@@ -454,7 +514,6 @@ const KEY_PRESS = {
 window.addEventListener('keydown', onKeyPress);
 function onKeyPress(e){
     let key = e.code;
-    // console.log(e)
     if(key === MOVE_DIR.left){
         e.preventDefault(); //prevents browser scroll
         KEY_PRESS.left = true;
@@ -513,15 +572,22 @@ function onKeyUp(e){
 function Ship(){
     this.thrust = false;
 
+    this.shipLost = false;
+
     this.speed = 4; //speed of ship movement
 
     this.ammoSupply = new AmmoSupply(); 
 
-    // this.ammoSupply.initialize();   //creates ammo collection (objPool)
-    //!TEST
     this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
-    
+
     //!TEST
+    // this.collidableWith = 'enemyShip';
+
+    this.collidableWith = 'enemyBullet';
+    this.type = "ship"
+
+    //!TEST
+    
 
 
     this.accelAnim = function() {
@@ -533,39 +599,55 @@ function Ship(){
         }
     }
 
-    let fireCoolDown = 25; 
+    let fireCoolDown = 30; 
     let coolDownCounter = 0; //shoot once every 25 frame
 
     this.draw = function(){
-        this.context.drawImage(SHIP, this.x, this.y);
+        if(this.isColliding === false){
+            this.context.drawImage(SHIP, this.x, this.y);
+        }
+        else{
+            this.shipLost === false ? SHIPDESTROYED.play() : null;
+            this.shipLost = true;
+            this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+            // this.context.drawImage(SHIPEXPLODE, this.x, this.y);
+            this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
+            //!TEST
+            game.gameOver();
+            
+        }
     }
 
     this.move = function(){
         coolDownCounter += 1;
         // console.log(coolDownCounter);
-        if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
+        if (this.isColliding === false){
+            if(KEY_PRESS.left || KEY_PRESS.right || KEY_PRESS.down || KEY_PRESS.up){
 
-            this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
-            //removes ship at previous location if it moved
+                this.context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight); 
+                //removes ship at previous location if it moved
 
-            if (KEY_PRESS.left) {                
-                this.x <= 0 ? this.x = 0 : this.x -= this.speed
-            }
-            if (KEY_PRESS.right) {
-                this.x >= this.canvasWidth-SHIP.width ? this.x = this.canvasWidth - SHIP.width : this.x += this.speed
-            }
-            if (KEY_PRESS.up) {
-                this.y <= 0 ? this.y = 0 : this.y -= this.speed
-                this.accelAnim();
-            }
-            if (KEY_PRESS.down) {
-                this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
-            }
+                if (KEY_PRESS.left) {                
+                    this.x <= 0 ? this.x = 0 : this.x -= this.speed
+                }
+                if (KEY_PRESS.right) {
+                    this.x >= this.canvasWidth-SHIP.width ? this.x = this.canvasWidth - SHIP.width : this.x += this.speed
+                }
+                if (KEY_PRESS.up) {
+                    this.y <= 0 ? this.y = 0 : this.y -= this.speed
+                    this.isColliding === false ? this.accelAnim() : null
+                }
+                if (KEY_PRESS.down) {
+                    this.y >= this.canvasHeight-SHIP.height ? this.y = this.canvasHeight - SHIP.height : this.y += this.speed
+                }
 
-            this.draw();
-            // this.accelAnim();
-        }    
-		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown) {
+                if(this.isColliding === false){
+                    this.draw();
+                }
+
+            }    
+        }
+		if (KEY_PRESS.space && coolDownCounter >= fireCoolDown && !this.isColliding) {
             this.fire();
             BLASTERSOUND.load();
             BLASTERSOUND.play();
@@ -575,7 +657,9 @@ function Ship(){
 
 	this.fire = function() {
         // this.ammoSupply.shoot(this.x+23, this.y);
+
         this.ammoSupply.shootTwo(this.x+8, this.y, this.x+35 , this.y);
+
         // this.ammoSupply.shootThree(this.x, this.y, this.x+44, this.y, this.x+23, this.y);
 	};
 }
@@ -592,11 +676,16 @@ function Enemy(monster){
 
     this.fired = false;
 
+    //!TEST
+    this.collidableWith = 'bullet';
+    this.type='enemy';
+    //!TEST
+
     this.create = function(x, y){ 
         this.x = x;  //enemy ship start pos (init 650)
         this.y = y;  //enemy ship start pos (init -10)
         this.speed = 5; 
-		this.speedX = 3; // speed they descend hori/diag
+		this.speedX = 6; // speed they descend hori/diag
 		this.speedY = 1; // speed they descend vert/diag
         this.fired = true;
         this.leftBorder = this.x - 750; // how far left they can go
@@ -624,13 +713,30 @@ function Enemy(monster){
             this.speedY = -1;
         }
 
-        if(this.monster === 'enemyShip'){
-            this.context.drawImage(ENEMY1, this.x, this.y);
-        } else if (this.monster === 'enemyBoss'){
-            this.context.drawImage(SPACESHIPBOSS, this.x, this.y);
-        }
-        
 
+        //!TEST
+        if(this.isColliding === false){
+            if(this.monster === 'enemyShip'){
+                this.context.drawImage(ENEMY1, this.x, this.y);
+            } else if (this.monster === 'enemyBoss'){
+                this.context.drawImage(SPIDERBOSS, this.x, this.y);
+            }
+
+            chanceOfFire = Math.floor(Math.random() * 101);
+            if (chanceOfFire/100 < randomFire){
+                this.fire();
+            }
+        }
+        else{
+            ENEMYDESTROYED.load();
+            ENEMYDESTROYED.play();
+            game.playerScore += 10;
+            // this.context.drawImage(SHIPEXPLODE2, this.x, this.y);
+            return true; //need to let "animateFiring" know its colliding
+        }
+        //!TEST
+        
+        //?TEST for boss round
         // Enemy has a chance to shoot every movement
         // if(this.monster === 'enemyBoss'){
         //     if (chanceOfFire < randomFire + 90) {
@@ -641,27 +747,26 @@ function Enemy(monster){
             //     this.fire();
             // }
         // }
-        chanceOfFire = Math.floor(Math.random() * 101);
-        if (chanceOfFire/100 < randomFire){
-            this.fire();
-        }
+        //?TEST for boss round
+
     };    
     
 	this.fire = function() {
         game.enemyAmmo.shoot(this.x+30, this.y+40);
-        // game.enemyAmmo.shoot(this.x, this.y);
     }
     
-    //resets the blaster object so we can reuse it in our pool
-    //possibly not needed here since its covered in Blaster Function
-    // this.resetBulletObj = function(){
-	// 	this.x = 0;
-	// 	this.y = 0;
-	// 	this.speed = 0;
-	// 	this.speedX = 0;
-	// 	this.speedY = 0;
-	// 	this.fired = false;
-    // }
+    //resetBulletObj is called at the end of AmmoSupply(pool)
+    //this is needed to clear the obj after collision so it doesnt just
+    //linger in the back as a shadow
+    this.resetBulletObj = function(){
+		this.x = 0;
+		this.y = 0;
+		this.speed = 0;
+		this.speedX = 0;
+		this.speedY = 0;
+    	this.fired = false;
+        this.isColliding = false;
+    }
 }
 Enemy.prototype = new Drawable();
                
@@ -698,9 +803,8 @@ function Game(){
             let shipStartPosY = (this.shipCanvas.height / 2) + 150;
 
             this.ship.initialize(shipStartPosX, shipStartPosY, SHIP.width, SHIP.height+20);
-
-        this.mainCanvas = document.getElementById('main');
-        this.mainContext = this.mainCanvas.getContext('2d');    
+            this.mainCanvas = document.getElementById('main');
+            this.mainContext = this.mainCanvas.getContext('2d');    
 
             Blaster.prototype.context = this.mainContext;
             Blaster.prototype.canvasWidth = this.mainCanvas.width;  //width="800"
@@ -725,7 +829,45 @@ function Game(){
             this.enemyAmmo = new AmmoSupply();
             this.enemyAmmo.initialize('zapper');
 
+
+
+
+
+            
+            this.quadTree = new QuadTree({
+                x:0, 
+                y:0, 
+                width: this.mainCanvas.width,
+                height: this.mainCanvas.height
+            });
+
+
         //!TEST
+        	this.playerScore = 0;
+
+
+            this.gameOver = function(){
+                MUSIC.pause();
+                // console.log('842', GAMEOVER)
+
+                GAMEOVER.style.display = 'block'
+
+            }
+
+            this.restart = function(){
+                console.log('restart')
+                GAMEOVER.style.display = 'none';
+
+                this.bgContext.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
+                this.shipContext.clearRect(0, 0, this.shipCanvas.width, this.shipCanvas.height);
+                this.mainContext.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+                
+                this.playerScore = 0;
+
+
+                game.initialize();
+
+            }
             MUSIC.load();
             MUSIC.play();
 
@@ -742,7 +884,7 @@ function Game(){
 				if (i % 6 === 0) {
 					x -= 400;
 					y += spacer
-				}
+                }
             }
     }
 
@@ -760,6 +902,18 @@ function Game(){
 
 
 function animate(){
+    //!TEST
+    document.getElementById('score').innerHTML = game.playerScore;
+    	// Insert objects into quadtree
+	game.quadTree.clear();
+	game.quadTree.insert(game.ship);
+	game.quadTree.insert(game.ship.ammoSupply.getPool());
+	game.quadTree.insert(game.enemyShip.getPool());
+	game.quadTree.insert(game.enemyAmmo.getPool());
+	detectCollision();
+
+    //!TEST
+
     window.requestAnimationFrame(animate); //lets the browser know to animate something
     game.background.draw();
     game.ship.accelAnim();
@@ -770,9 +924,214 @@ function animate(){
     game.enemyShip.animateFiring();
     game.spiderBoss.animateFiring();
     game.enemyAmmo.animateFiring();
+    if (game.enemyShip.getPool().length === 0) {
+        game.formation1();
+    }
+}
+
+
+//! https://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
+// The five methods of a quadtree: clear, split, getIndex, insert, and retrieve.
+function QuadTree(bound, lvl) {
+
+    let maxObjects = 10;
+    let maxLevels = 5;
+    let objects = [];
+    let level = lvl || 0;
+
+	this.bound = bound || {
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0
+	};
+	this.nodes = [];
+    // console.log('obj - 930', objects);
+    // returns the blaster object (enemys_bullet)
+
+
+    //Clears the objects from all nodes in the quadtree recursively
+	this.clear = function() {
+		objects = [];
+        for(let i = 0; i < this.nodes.length; i ++){
+            if (this.nodes[i] != null){
+                this.nodes[i].clear();
+            }
+        }
+    };
     
 
+    //splits the node in to 4 subnodes by dividing the node into 4 equal parts
+    //and initializing the 4 subnodes with new bound
+    this.split = function(){
+        let subWidth = this.bound.width / 2;
+        let subHeight = this.bound.height / 2;
+
+        this.nodes[0] = new QuadTree(level + 1, {
+            x: this.bound.x + subWidth,
+            y: this.bound.y,
+            width: subWidth,
+            height: subHeight
+        })
+        this.nodes[1] = new QuadTree(level + 1, {
+            x: this.bound.x,
+            y: this.bound.y,
+            width: subWidth,
+            height: subHeight
+        })
+        this.nodes[2] = new QuadTree(level + 1, {
+            x: this.bound.x,
+            y: this.bound.y + subHeight,
+            width: subWidth,
+            height: subHeight
+        })
+        this.nodes[3] = new QuadTree(level + 1, {
+            x: this.bound.x + subWidth,
+            y: this.bound.y + subHeight,
+            width: subWidth,
+            height: subHeight
+        })
+    }
+
+	
+	//Get all objects in the quadTree
+	this.getAllObjects = function(returnedObjects) {
+		for (let i = 0; i < this.nodes.length; i++) {
+			this.nodes[i].getAllObjects(returnedObjects);
+		}
+		for (let i = 0, len = objects.length; i < len; i++) {
+			returnedObjects.push(objects[i]);
+		}
+		return returnedObjects;
+    };
+    
+
+	// Return all objects that the object could collide with
+	this.retrieve = function(returnedObjects, obj) {
+		if (typeof obj === "undefined") {
+			console.log("UNDEFINED OBJECT");
+			return;
+		}
+		let index = this.getIndex(obj);
+		if (index != -1 && this.nodes.length) {
+			this.nodes[index].retrieve(returnedObjects, obj);
+		}
+		for (let i = 0, len = objects.length; i < len; i++) {
+			returnedObjects.push(objects[i]);
+		}
+		return returnedObjects;
+	};
+	
+
+    //1. determines whether the node has any child nodes and tries to add obj there.
+    //2. if no child nodes or obj doesnt fit in a child node, it adds the obj to parent
+    //3. once added, it determines whether the node needs to split by checking against 
+    // the max allowed objects.
+    //4. splitting will cause node to insert any obj that can fit in a child node to 
+    //be added to the child node. Otherwise, it will remain in parent
+    this.insert = function (obj) {
+
+        if (obj instanceof Array) {
+            for (let i = 0; i < obj.length; i++) {
+                this.insert(obj[i]);
+            }
+            return;
+        }
+        
+        if ( this.nodes[0] != null ){
+            let index = this.getIndex(obj);
+
+            if (index != -1){
+                this.nodes[index].insert(obj);
+                return;
+            
+            }
+        }
+
+        objects.push(obj);
+
+        if (objects.length > maxObjects && level < maxLevels) {
+            if (this.nodes[0] == null) {
+                this.split();
+            }
+            let i = 0;
+            while (i < objects.length) {
+                let index = this.getIndex(objects[i]);
+                if (index != -1) {
+                    this.nodes[index].insert((objects.splice(i,1))[0]);
+                }
+                else {
+                    i++;
+                }
+            }
+        }
+    }
+
+    
+    // 1 | 0
+    // -----
+    // 2 | 3
+    //determines where an object belongs in the quadtree via which node it fits into
+     this.getIndex = function(obj){
+        let index = -1;
+        let verticalMidpoint = this.bound.x + this.bound.width / 2;
+        let horizontalMidpoint = this.bound.y + this.bound.height / 2;
+
+        // Object can completely fit within the top quadrants
+        let topQuadrant = (obj.y < horizontalMidpoint) && (obj.y + obj.height < horizontalMidpoint);
+        // Object can completely fit within the bottom quadrants
+        let bottomQuadrant = obj.y > horizontalMidpoint;
+
+        //Object can completely fit within the left quadrants
+        if (obj.x < verticalMidpoint && obj.x + obj.width < verticalMidpoint){
+            if ( topQuadrant ){
+                index = 1;
+            } else if ( bottomQuadrant ) {
+                index = 2;
+            }
+        } else if ( obj.x > verticalMidpoint ) {
+            if ( topQuadrant ){
+                index = 0;
+            } else if ( bottomQuadrant) {
+                index = 3;
+            }
+        }
+        return index;
+    }
+
 }
+
+function detectCollision() {
+    let objects = [];
+    game.quadTree.getAllObjects(objects);
+	for (let x = 0; x < objects.length; x++) {
+		game.quadTree.retrieve(obj = [], objects[x]);
+
+		for (y = 0; y < obj.length; y++) {
+
+            // DETECT COLLISION ALGORITHM
+            if (objects[x].collidableWith === obj[y].type && //!confirming one obj can collide with the other obj
+				(objects[x].x < obj[y].x + obj[y].itemWidth &&
+			     objects[x].x + objects[x].itemWidth > obj[y].x &&
+				 objects[x].y < obj[y].y + obj[y].itemHeight &&
+                 objects[x].y + objects[x].itemHeight > obj[y].y)) {
+
+                objects[x].isColliding = true;
+                obj[y].isColliding = true;
+                
+                // if(objects[x].type === 'bullet'){
+                //     objects[x].collidableWith = null;
+                //     objects[x].context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight)
+                // }
+                // if(objects[y].type === 'bullet'){
+                //     objects[y].collidableWith = null;
+                //     objects[x].context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight)
+                // }
+            }
+        }
+	}
+};
+
 
 function audio_control(){
     const musicControl = document.getElementById('vol_rocker');
@@ -787,10 +1146,14 @@ function audio_control(){
 
 // Initialize Game
 let game = new Game();
+let GAMEOVER = null;
 
 function initialize(){
     game.initialize();
     game.start();
     this.menu.style.display = "none";
+    // this.gameOver.style.display = "none";
+    // console.log('1132', this.gameOver.style.display = 'block')
+    GAMEOVER = this.gameOver
 }
 

@@ -31,6 +31,10 @@
     
 } 
 
+.header a {
+    color: #0ccac4;
+}
+
 @font-face {
     font-family: 'SEGA LOGO FONT';
     font-style: normal;
@@ -175,7 +179,7 @@
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 6;
     top: 0;
     left: 0;
     background-color: #111;
@@ -191,6 +195,7 @@
     color: lightgrey;
     display: block;
     transition: 0.3s;
+    
 }
 
 .sidenav a:hover {
@@ -203,6 +208,7 @@
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
+    cursor: pointer;
 }
 
 #about {
@@ -219,4 +225,66 @@
     .sidenav a {
         font-size: 18px;
     }
+}
+
+#startBtn{
+    cursor: pointer;
+}
+
+#gameOver{
+    display:none;
+    background-color: black;
+    justify-content: center;
+    text-align: center;
+    position: absolute;
+    width: 102%;
+    margin-top: -50px;
+    z-index: 5;
+    font-family: 'spaceFont',
+    Arial,
+    sans-serif;
+    font-size: 25px;
+    color: red;
+    opacity: 0.8;
+    padding-top: 30px;
+    margin-left: -10px;
+
+}
+
+
+
+#restartBtn{
+    margin-bottom: 50px;
+    font-size: 25px;
+    font-family: 'spaceFont',
+    Arial,
+    sans-serif;
+    color: white;
+    border: none;
+    background: none;
+    margin-top: 50px;
+    cursor: pointer;
+
+}
+
+.score{
+    /* display: flex; */
+    /* justify-content: center;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 650px; */
+    display:flex;
+    justify-content: center;
+    margin-left: 650px;
+    margin-top: 10px;
+    background-color: none;
+
+    /* top: 5px; */
+    /* left: 930px; */
+    color: #ffc05a;
+    font-family: 'spaceFont',
+    Arial,
+    sans-serif;
+    /* cursor: default; */
 }
