@@ -4,7 +4,7 @@ Hi there! Thanks for visiting :]
 redesigned 2D Game, Space Invaders.
 
 ### Features
-* Fight off the enemy aliens but shooting them down with your blaster!
+* Fight off the enemy aliens by shooting them down with your blaster!
 
 ![image](https://github.com/1071919wl/GalaxyDefender/blob/master/stylesheets/readmeIMG/gamePlay.png)
 
