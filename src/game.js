@@ -284,7 +284,11 @@ function Drawable(){
     this.type = '';
 
     this.isCollidableWith = function(object){
-        return (this.collidableWith === object.type);
+        if( this.collidableWith === object.type || this.collidableWith2 === object.type)
+            return true;
+        else{
+            return false;
+        }
     }
     //!TEST 1/9
 
@@ -581,8 +585,7 @@ function Ship(){
     this.ammoSupply.initialize('blaster');   //creates ammo collection (objPool)
 
     //!TEST
-    // this.collidableWith = 'enemyShip';
-
+    this.collidableWith2 = 'enemy';
     this.collidableWith = 'enemyBullet';
     this.type = "ship"
 
@@ -1127,6 +1130,16 @@ function detectCollision() {
                 //     objects[y].collidableWith = null;
                 //     objects[x].context.clearRect(this.x, this.y, this.itemWidth, this.itemHeight)
                 // }
+            }
+             if (objects[x].collidableWith2 === obj[y].type && //!confirming one obj can collide with the other obj
+				(objects[x].x < obj[y].x + obj[y].itemWidth &&
+			     objects[x].x + objects[x].itemWidth > obj[y].x &&
+				 objects[x].y < obj[y].y + obj[y].itemHeight &&
+                 objects[x].y + objects[x].itemHeight > obj[y].y)) {
+                     
+                objects[x].isColliding = true;
+                
+                
             }
         }
 	}
