@@ -858,7 +858,7 @@ function Game(){
             }
 
             this.restart = function(){
-                console.log('restart')
+                // console.log('restart')
                 GAMEOVER.style.display = 'none';
 
                 this.bgContext.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
@@ -1012,7 +1012,7 @@ function QuadTree(bound, lvl) {
 	// Return all objects that the object could collide with
 	this.retrieve = function(returnedObjects, obj) {
 		if (typeof obj === "undefined") {
-			console.log("UNDEFINED OBJECT");
+			// console.log("UNDEFINED OBJECT");
 			return;
 		}
 		let index = this.getIndex(obj);
