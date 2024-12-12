@@ -1,6 +1,6 @@
 # README
 Hi there! Thanks for visiting :]
-[GalaxyDefender](https://1071919wl.github.io/GalaxyDefender/) is a updated and 
+[GalaxyDefender](https://wllmlng.github.io/GalaxyDefender/) is a updated and 
 redesigned 2D Game, Space Invaders.
 
 ### Features
